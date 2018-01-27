@@ -1,70 +1,71 @@
 /////////////////////////////////////////////////////////////////
 //    Sýnidæmi í Tölvugrafík
-//     Sýnir notkun á lyklaborðsatburðum til að hreyfa spaða
+//     Sýnir notkun á tveimur minnissvæðum (VBO) og hvernig þau
+//     eru virkjuð rétt fyrir teikningu í render().
+//     Tvö VBO teiknuð með sömu liturum (og "uniform" breytu)
 //
 //    Hjálmtýr Hafsteinsson, janúar 2018
 /////////////////////////////////////////////////////////////////
-var canvas;
 var gl;
 
-/*circle values*/
-var numCirclePoints = 30;
-var radius = 0.4;
-var center = vec2(0, 0);
-
-var circle_points = [];
-
-var bufferIdP;
-var bufferIdB;
-
+// Global variables (accessed in render)
+var locPosition;
+var locColor;
+var buferrIdPanel;
+var bufferIdBall;
+var colorA = vec4(1.0, 0.0, 0.0, 1.0);
+var colorB = vec4(0.0, 1.0, 0.0, 1.0);
 
 window.onload = function init() {
-
-    canvas = document.getElementById("gl-canvas");
+    var canvas = document.getElementById("gl-canvas");
 
     gl = WebGLUtils.setupWebGL(canvas);
     if (!gl) {
         alert("WebGL isn't available");
     }
 
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(0.8, 0.8, 0.8, 1.0);
 
-    //
-    //  Load shaders and initialize attribute buffers
-    //
-    var program = initShaders(gl, "vertex-shader", "fragment-shader");
-    gl.useProgram(program);
-
-    var vertices = [
+    // Two triangles
+    var verticesPanel = [
         vec2(-0.1, -0.9),
         vec2(-0.1, -0.86),
         vec2(0.1, -0.86),
         vec2(0.1, -0.9)
     ];
+    var verticesBall = [
+        vec2(0.1, -0.5),
+        vec2(0.5, 0.5),
+        vec2(0.9, -0.5),
+    ];
 
+    points.push( center );
+    createCirclePoints( center, radius, numCirclePoints );
 
-    circle_points.push(center);
-    createCirclePoints(center, radius, numCirclePoints);
+    //
+    //  Configure WebGL
+    //
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(0.9, 0.9, 0.9, 1.0);
 
+    //  Load shaders and initialize attribute buffers
 
-    // Load the data into the GPU for the ball
-    bufferIdB = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdB);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(circle_points), gl.DYNAMIC_DRAW);
+    var program = initShaders(gl, "vertex-shader", "fragment-shader");
+    gl.useProgram(program);
 
-    // Load the data into the GPU for the panel
-    bufferIdP = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdP);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.DYNAMIC_DRAW);
+    // Define two VBOs and load the data into the GPU
+    buferrIdPanel = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buferrIdPanel);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(verticesPanel), gl.STATIC_DRAW);
 
+    bufferIdBall = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdBall);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(verticesBall), gl.STATIC_DRAW);
 
+    // Get location of shader variable vPosition
+    locPosition = gl.getAttribLocation(program, "vPosition");
+    gl.enableVertexAttribArray(locPosition);
 
-    // Associate out shader variables with our data buffer
-    var vPosition = gl.getAttribLocation(program, "vPosition");
-    gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(vPosition);
-
+    locColor = gl.getUniformLocation(program, "rcolor");
     // Event listener for keyboard
     window.addEventListener("keydown", function (e) {
         switch (e.keyCode) {
@@ -77,57 +78,51 @@ window.onload = function init() {
             default:
                 xmove = 0.0;
         }
-
+        /*
         /*make sure the paddle doesn't go out of bounds*/
-        if (vertices[3][0] > 1 || vertices[3][0] < -1) {
+        
+        if (verticesPanel[3][0] > 1 || verticesPanel[3][0] < -1) {
             if (xmove < 0) {
                 for (i = 0; i < 4; i++) {
-                    vertices[i][0] += xmove;
+                    verticesPanel[i][0] += xmove;
                 }
             }
-        } else if (vertices[0][0] > 1 || vertices[0][0] < -1) {
+        } else if (verticesPanel[0][0] > 1 || verticesPanel[0][0] < -1) {
             if (xmove > 0) {
                 for (i = 0; i < 4; i++) {
-                    vertices[i][0] += xmove;
+                    verticesPanel[i][0] += xmove;
                 }
             }
         } else {
             for (i = 0; i < 4; i++) {
-                vertices[i][0] += xmove;
+                verticesPanel[i][0] += xmove;
             }
         }
-        gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdP);
-        gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(vertices));
+        gl.bindBuffer(gl.ARRAY_BUFFER, buferrIdPanel);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(verticesPanel));
     });
 
     render();
-}
-
-// Create the points of the circle
-function createCirclePoints(cent, rad, k) {
-    circle_points = [];
-    var dAngle = 2 * Math.PI / k;
-    for (i = k; i >= 0; i--) {
-        a = i * dAngle;
-        var p = vec2(rad * Math.sin(a) + cent[0], rad * Math.cos(a) + cent[1]);
-        circle_points.push(p);
-    }
-}
+};
 
 
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-
-
-
-    //draw the panel first
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdP);
+    // Draw first triangle    
+    gl.bindBuffer(gl.ARRAY_BUFFER, buferrIdPanel);
+    gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform4fv(locColor, flatten(colorA));
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
+    // Draw second triangle
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdBall);
+    gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform4fv(locColor, flatten(colorB));
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdB);
-    gl.drawArrays(gl.TRIANGLE_FAN,0,flatten(circle_points));
+
 
     window.requestAnimFrame(render);
+
 }
