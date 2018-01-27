@@ -44,14 +44,14 @@ window.onload = function init() {
     ];
 
 
-    circle_points.push( center );
-    createCirclePoints( center, radius, numCirclePoints );
+    circle_points.push(center);
+    createCirclePoints(center, radius, numCirclePoints);
 
-    
+
     // Load the data into the GPU for the ball
     bufferIdB = gl.createBuffer();
-    gl.bindBuffer( gl.ARRAY_BUFFER, bufferIdB );
-    gl.bufferData( gl.ARRAY_BUFFER, flatten(circle_points), gl.DYNAMIC_DRAW );
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdB);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(circle_points), gl.DYNAMIC_DRAW);
 
     // Load the data into the GPU for the panel
     bufferIdP = gl.createBuffer();
@@ -85,7 +85,7 @@ window.onload = function init() {
                     vertices[i][0] += xmove;
                 }
             }
-        } else if(vertices[0][0] > 1 || vertices[0][0] < -1){
+        } else if (vertices[0][0] > 1 || vertices[0][0] < -1) {
             if (xmove > 0) {
                 for (i = 0; i < 4; i++) {
                     vertices[i][0] += xmove;
@@ -96,8 +96,7 @@ window.onload = function init() {
                 vertices[i][0] += xmove;
             }
         }
-
-
+        gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdP);
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(vertices));
     });
 
@@ -105,45 +104,30 @@ window.onload = function init() {
 }
 
 // Create the points of the circle
-function createCirclePoints( cent, rad, k )
-{
-    var dAngle = 2*Math.PI/k;
-    for( i=k; i>=0; i-- ) {
-    	a = i*dAngle;
-    	var p = vec2( rad*Math.sin(a) + cent[0], rad*Math.cos(a) + cent[1] );
-    	circle_points.push(p);
+function createCirclePoints(cent, rad, k) {
+    circle_points = [];
+    var dAngle = 2 * Math.PI / k;
+    for (i = k; i >= 0; i--) {
+        a = i * dAngle;
+        var p = vec2(rad * Math.sin(a) + cent[0], rad * Math.cos(a) + cent[1]);
+        circle_points.push(p);
     }
 }
 
 
 function render() {
-/*
-     // HH: Get random shift
-     var drx = Math.random()/10.0 - 0.05;
-     var dry = Math.random()/10.0 - 0.05;
- 
-     // HH: Change points coordinates
-     for( i=0; i<circle_points.length; i++ ) {
-         circle_points[i][0] += drx;
-         circle_points[i][1] += dry;
-     }*/
-     
-    // HH: Send the new coordinates over to graphics memory
-    //gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(circle_points));
-
-
     gl.clear(gl.COLOR_BUFFER_BIT);
 
+
+
+
     //draw the panel first
-    gl.bindBuffer( gl.ARRAY_BUFFER, bufferIdP );
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdP);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
-    //draw the ball
-    //gl.bindBuffer( gl.ARRAY_BUFFER, bufferIdB );
-    //gl.drawArrays( gl.TRIANGLE_FAN, 1, circle_points.length );
 
-
-
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdB);
+    gl.drawArrays(gl.TRIANGLE_FAN,0,flatten(circle_points));
 
     window.requestAnimFrame(render);
 }
