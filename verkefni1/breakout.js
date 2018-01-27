@@ -16,6 +16,15 @@ var bufferIdBall;
 var colorA = vec4(1.0, 0.0, 0.0, 1.0);
 var colorB = vec4(0.0, 1.0, 0.0, 1.0);
 
+
+/* Circle attribute*/
+
+var numCirclePoints = 50;
+var radius = 0.005;
+var center = vec2(0, 0);
+
+var points = [];
+
 window.onload = function init() {
     var canvas = document.getElementById("gl-canvas");
 
@@ -32,14 +41,10 @@ window.onload = function init() {
         vec2(0.1, -0.86),
         vec2(0.1, -0.9)
     ];
-    var verticesBall = [
-        vec2(0.1, -0.5),
-        vec2(0.5, 0.5),
-        vec2(0.9, -0.5),
-    ];
 
-    points.push( center );
-    createCirclePoints( center, radius, numCirclePoints );
+
+    points.push(center);
+    createCirclePoints(center, radius, numCirclePoints);
 
     //
     //  Configure WebGL
@@ -59,7 +64,7 @@ window.onload = function init() {
 
     bufferIdBall = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdBall);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(verticesBall), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
 
     // Get location of shader variable vPosition
     locPosition = gl.getAttribLocation(program, "vPosition");
@@ -80,7 +85,7 @@ window.onload = function init() {
         }
         /*
         /*make sure the paddle doesn't go out of bounds*/
-        
+
         if (verticesPanel[3][0] > 1 || verticesPanel[3][0] < -1) {
             if (xmove < 0) {
                 for (i = 0; i < 4; i++) {
@@ -100,6 +105,8 @@ window.onload = function init() {
         }
         gl.bindBuffer(gl.ARRAY_BUFFER, buferrIdPanel);
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(verticesPanel));
+
+
     });
 
     render();
@@ -109,20 +116,53 @@ window.onload = function init() {
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    // Draw first triangle    
+    /**
+     * 
+     * BALL MOVEMENT
+     * 
+     * 
+     */
+
+    // HH: Get random shift
+    var drx = Math.random() / 10.0 - 0.05;
+    var dry = Math.random() / 10.0 - 0.05;
+
+    // HH: Change points coordinates
+    for (i = 0; i < points.length; i++) {
+        points[i][0] += drx;
+        points[i][1] += dry;
+    }
+
+    // HH: Send the new coordinates over to graphics memory
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdBall);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(points));
+
+
+
+    // Draw Panel    
     gl.bindBuffer(gl.ARRAY_BUFFER, buferrIdPanel);
     gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
     gl.uniform4fv(locColor, flatten(colorA));
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
-    // Draw second triangle
+    // Draw Ball
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdBall);
     gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
     gl.uniform4fv(locColor, flatten(colorB));
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, points.length);
 
 
 
     window.requestAnimFrame(render);
 
+}
+
+// Create the points of the circle
+function createCirclePoints(cent, rad, k) {
+    var dAngle = 2 * Math.PI / k;
+    for (i = k; i >= 0; i--) {
+        a = i * dAngle;
+        var p = vec2(rad * Math.sin(a) + cent[0], rad * Math.cos(a) + cent[1]);
+        points.push(p);
+    }
 }
