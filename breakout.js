@@ -14,6 +14,9 @@ var center = vec2(0, 0);
 
 var circle_points = [];
 
+var bufferIdP;
+var bufferIdB;
+
 
 window.onload = function init() {
 
@@ -40,10 +43,22 @@ window.onload = function init() {
         vec2(0.1, -0.9)
     ];
 
-    // Load the data into the GPU
-    var bufferId = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
+
+    circle_points.push( center );
+    createCirclePoints( center, radius, numCirclePoints );
+
+    
+    // Load the data into the GPU for the ball
+    bufferIdB = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, bufferIdB );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(circle_points), gl.DYNAMIC_DRAW );
+
+    // Load the data into the GPU for the panel
+    bufferIdP = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdP);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.DYNAMIC_DRAW);
+
+
 
     // Associate out shader variables with our data buffer
     var vPosition = gl.getAttribLocation(program, "vPosition");
@@ -102,7 +117,7 @@ function createCirclePoints( cent, rad, k )
 
 
 function render() {
-
+/*
      // HH: Get random shift
      var drx = Math.random()/10.0 - 0.05;
      var dry = Math.random()/10.0 - 0.05;
@@ -111,13 +126,22 @@ function render() {
      for( i=0; i<circle_points.length; i++ ) {
          circle_points[i][0] += drx;
          circle_points[i][1] += dry;
-     }
+     }*/
      
     // HH: Send the new coordinates over to graphics memory
-    gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(circle_points));
+    //gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(circle_points));
+
 
     gl.clear(gl.COLOR_BUFFER_BIT);
+
+    //draw the panel first
+    gl.bindBuffer( gl.ARRAY_BUFFER, bufferIdP );
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+
+    //draw the ball
+    //gl.bindBuffer( gl.ARRAY_BUFFER, bufferIdB );
+    //gl.drawArrays( gl.TRIANGLE_FAN, 1, circle_points.length );
+
 
 
 
