@@ -20,10 +20,12 @@ var colorB = vec4(0.0, 1.0, 0.0, 1.0);
 /* Circle attribute*/
 
 var numCirclePoints = 50;
-var radius = 0.005;
-var center = vec2(0, 0);
+var radius = 0.008;
+var center = vec2(0.5, 0);
 
 var points = [];
+
+var directon = "right-upper";
 
 window.onload = function init() {
     var canvas = document.getElementById("gl-canvas");
@@ -124,14 +126,63 @@ function render() {
      */
 
     // HH: Get random shift
-    var drx = Math.random() / 10.0 - 0.05;
-    var dry = Math.random() / 10.0 - 0.05;
+    var drx = 0.01;
+    var dry = 0.01;
 
     // HH: Change points coordinates
     for (i = 0; i < points.length; i++) {
-        points[i][0] += drx;
-        points[i][1] += dry;
+
+        if (directon === "right-upper") {
+            points[i][0] += drx;
+            points[i][1] += dry;
+        }
+
+        if (directon === "left-upper") {
+            points[i][0] -= drx;
+            points[i][1] += dry;
+        }
+
+        if (directon === "right-under") {
+            points[i][0] += drx;
+            points[i][1] -= dry;
+        }
+
+        if (directon === "left-under") {
+            points[i][0] -= drx;
+            points[i][1] -= dry;
+        }
     }
+
+    if(points[0][0] > 1 - radius){
+        if(directon === "right-upper"){
+            directon = "left-upper";
+        }
+        if(directon === "right-under"){
+            directon = "left-under";
+        }
+    }
+
+    if(points[0][1] > 1 - radius){
+        if(directon === "left-upper"){
+            directon = "left-under";
+        }
+        if(directon === "right-upper"){
+            directon = "right-under";
+        }
+        directon = "left-under";
+    }
+
+    if(points[0][0] < -1 + radius){
+        if(directon === "left-under"){
+            directon = "right-under";
+        }
+        if(directon === "left-upper"){
+            directon = "right-upper";
+        }
+    }
+
+    
+    console.log();
 
     // HH: Send the new coordinates over to graphics memory
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdBall);
