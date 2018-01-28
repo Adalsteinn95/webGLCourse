@@ -27,6 +27,9 @@ var points = [];
 
 var directon = "right-upper";
 
+/* Panel */
+var verticesPanel;
+
 window.onload = function init() {
     var canvas = document.getElementById("gl-canvas");
 
@@ -37,7 +40,7 @@ window.onload = function init() {
 
 
     // Two triangles
-    var verticesPanel = [
+    verticesPanel = [
         vec2(-0.1, -0.9),
         vec2(-0.1, -0.86),
         vec2(0.1, -0.86),
@@ -77,10 +80,10 @@ window.onload = function init() {
     window.addEventListener("keydown", function (e) {
         switch (e.keyCode) {
             case 37: // vinstri ör
-                xmove = -0.04;
+                xmove = -0.02;
                 break;
             case 39: // hægri ör
-                xmove = 0.04;
+                xmove = 0.02;
                 break;
             default:
                 xmove = 0.0;
@@ -153,6 +156,8 @@ function render() {
         }
     }
 
+    /* collision on walls */
+
     if(points[0][0] > 1 - radius){
         if(directon === "right-upper"){
             directon = "left-upper";
@@ -169,7 +174,6 @@ function render() {
         if(directon === "right-upper"){
             directon = "right-under";
         }
-        directon = "left-under";
     }
 
     if(points[0][0] < -1 + radius){
@@ -181,8 +185,25 @@ function render() {
         }
     }
 
-    
-    console.log();
+ 
+
+    if(points[0][0] > verticesPanel[0][0] && points[0][0] < verticesPanel[3][0]){
+        if(points[0][1] < verticesPanel[1][1] && points[0][1] > verticesPanel[0][1]){
+            if(directon === "left-under"){
+                directon = "left-upper";
+            }         
+            if(directon === "right-under"){
+                directon = "right-upper";
+            }
+        }
+    }
+
+    if(points[0][1] < -1){
+        window.location.reload();
+    }
+
+
+
 
     // HH: Send the new coordinates over to graphics memory
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdBall);
