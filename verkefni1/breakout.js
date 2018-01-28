@@ -29,6 +29,8 @@ var directon = "right-upper";
 
 /* Panel */
 var verticesPanel;
+var score = 0;
+var scoreBoard;
 
 window.onload = function init() {
     var canvas = document.getElementById("gl-canvas");
@@ -46,6 +48,9 @@ window.onload = function init() {
         vec2(0.1, -0.86),
         vec2(0.1, -0.9)
     ];
+
+    scoreBoard = document.querySelector('h1');
+    scoreBoard.textContent = score;
 
 
     points.push(center);
@@ -185,7 +190,7 @@ function render() {
         }
     }
 
- 
+    
 
     if(points[0][0] > verticesPanel[0][0] && points[0][0] < verticesPanel[3][0]){
         if(points[0][1] < verticesPanel[1][1] && points[0][1] > verticesPanel[0][1]){
@@ -195,14 +200,22 @@ function render() {
             if(directon === "right-under"){
                 directon = "right-upper";
             }
+            score++;
         }
     }
 
     if(points[0][1] < -1){
-        window.location.reload();
+        points = [];
+        center = vec2(0.5, 0);
+        points.push(center);
+        createCirclePoints(center, radius, numCirclePoints);
+        score--;
+
+        console.log()
+        
     }
 
-
+    scoreBoard.textContent = score;
 
 
     // HH: Send the new coordinates over to graphics memory
