@@ -206,7 +206,7 @@ function render() {
 
     if(points[0][1] < -1){
         points = [];
-        center = vec2(0.5, 0);
+        center = vec2(Math.random(),0);
         points.push(center);
         createCirclePoints(center, radius, numCirclePoints);
         score--;
@@ -247,7 +247,7 @@ function createCirclePoints(cent, rad, k) {
     var dAngle = 2 * Math.PI / k;
     for (i = k; i >= 0; i--) {
         a = i * dAngle;
-        var p = vec2(rad * Math.sin(a) + cent[0], rad * Math.cos(a) + cent[1]);
+        var p = vec2(rad * Math.sin(a) + cent[0] , rad * Math.cos(a) + cent[1]);
         points.push(p);
     }
 }
