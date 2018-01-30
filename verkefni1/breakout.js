@@ -17,7 +17,7 @@ var colorA = vec4(1.0, 0.0, 0.0, 1.0);
 var colorB = vec4(0.0, 1.0, 0.0, 1.0);
 
 
-/* Circle attribute*/
+/* ball attribute*/
 
 var numCirclePoints = 50;
 var radius = 0.008;
@@ -27,10 +27,15 @@ var points = [];
 
 var directon = "right-upper";
 
+var offsetx = 0;
+var offsety = 0;
+
 /* Panel */
+
 var verticesPanel;
 var score = 0;
 var scoreBoard;
+var xmove = 0;
 
 window.onload = function init() {
     var canvas = document.getElementById("gl-canvas");
@@ -112,7 +117,31 @@ window.onload = function init() {
             for (i = 0; i < 4; i++) {
                 verticesPanel[i][0] += xmove;
             }
+        } 
+
+        switch (e.keyCode){
+            case 87: // w
+                offsety = 0.02
+                break;
+            case 65: // a
+                offsetx = -0.02
+                break;
+            case 68: // d
+                offsetx = 0.02
+                break
+            case 83: // s
+                offsety = -0.02
+                break
+            default:
+                offsety = 0;
+                offsetx = 0;
         }
+
+        console.log(offsety);
+
+
+        /* move the ball based on wasd keys */
+        
         gl.bindBuffer(gl.ARRAY_BUFFER, buferrIdPanel);
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(verticesPanel));
 
@@ -133,11 +162,15 @@ function render() {
      * 
      */
 
-    // HH: Get random shift
-    var drx = 0.01;
-    var dry = 0.01;
+    var drx = 0.01 + offsetx;
+    var dry = 0.01 + offsety;
 
-    // HH: Change points coordinates
+    if(offsetx > 0 || offsety > 0){
+        drx = 0.01 + offsetx;
+        dry = 0.01 + offsety;
+    }
+
+
     for (i = 0; i < points.length; i++) {
 
         if (directon === "right-upper") {
