@@ -11,15 +11,19 @@ var gl;
 // Global variables (accessed in render)
 var locPosition;
 var locColor;
+
+
 var buferrIdPanel;
 var bufferIdBall;
+var bufferIdSquare;
+
 var colorA = vec4(1.0, 0.0, 0.0, 1.0);
 var colorB = vec4(0.0, 1.0, 0.0, 1.0);
 
 
 /* ball attribute*/
 
-var numCirclePoints = 50;
+var numCirclePoints = 30;
 var radius = 0.008;
 var center = vec2(0.5, 0);
 
@@ -37,6 +41,12 @@ var score = 0;
 var scoreBoard;
 var xmove = 0;
 
+/* collision detection */
+var prevX;
+var prevY;
+var nextX;
+var prevX;
+
 window.onload = function init() {
     var canvas = document.getElementById("gl-canvas");
 
@@ -52,6 +62,14 @@ window.onload = function init() {
         vec2(-0.1, -0.86),
         vec2(0.1, -0.86),
         vec2(0.1, -0.9)
+    ];
+
+    /* squares */
+    verticesSquare1 = [
+        vec2(-0.1, 0.33),
+        vec2(-0.1, 0.23),
+        vec2(0.1, 0.23),
+        vec2(0.1, 0.33)
     ];
 
     scoreBoard = document.querySelector('h1');
@@ -81,6 +99,12 @@ window.onload = function init() {
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdBall);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
 
+
+    /* define squares buffer */
+    bufferIdSquare = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdSquare);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(verticesSquare1), gl.STATIC_DRAW);
+
     // Get location of shader variable vPosition
     locPosition = gl.getAttribLocation(program, "vPosition");
     gl.enableVertexAttribArray(locPosition);
@@ -95,8 +119,26 @@ window.onload = function init() {
             case 39: // hægri ör
                 xmove = 0.02;
                 break;
+            case 87: // w
+                xmove = 0.0;
+                offsety = 0.005
+                break;
+            case 65: // a
+                xmove = 0.0;
+                offsetx = -0.005
+                break;
+            case 68: // d
+                xmove = 0.0;
+                offsetx = 0.005
+                break
+            case 83: // s
+                xmove = 0.0;
+                offsety = -0.005
+                break
             default:
                 xmove = 0.0;
+                offsety = 0;
+                offsetx = 0;
         }
         /*
         /*make sure the paddle doesn't go out of bounds*/
@@ -117,33 +159,11 @@ window.onload = function init() {
             for (i = 0; i < 4; i++) {
                 verticesPanel[i][0] += xmove;
             }
-        } 
-
-        switch (e.keyCode){
-            case 87: // w
-                offsety = 0.02
-                break;
-            case 65: // a
-                offsetx = -0.02
-                break;
-            case 68: // d
-                offsetx = 0.02
-                break
-            case 83: // s
-                offsety = -0.02
-                break
-            default:
-                offsety = 0;
-                offsetx = 0;
         }
-
-        console.log(offsety);
 
 
         /* move the ball based on wasd keys */
-        
-        gl.bindBuffer(gl.ARRAY_BUFFER, buferrIdPanel);
-        gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(verticesPanel));
+
 
 
     });
@@ -165,10 +185,12 @@ function render() {
     var drx = 0.01 + offsetx;
     var dry = 0.01 + offsety;
 
-    if(offsetx > 0 || offsety > 0){
+    if (offsetx > 0 || offsety > 0) {
         drx = 0.01 + offsetx;
         dry = 0.01 + offsety;
     }
+
+
 
 
     for (i = 0; i < points.length; i++) {
@@ -196,56 +218,72 @@ function render() {
 
     /* collision on walls */
 
-    if(points[0][0] > 1 - radius){
-        if(directon === "right-upper"){
+    if (points[0][0] > 1 - radius) {
+        if (directon === "right-upper") {
             directon = "left-upper";
         }
-        if(directon === "right-under"){
+        if (directon === "right-under") {
             directon = "left-under";
         }
     }
 
-    if(points[0][1] > 1 - radius){
-        if(directon === "left-upper"){
+    if (points[0][1] > 1 - radius) {
+        if (directon === "left-upper") {
             directon = "left-under";
         }
-        if(directon === "right-upper"){
+        if (directon === "right-upper") {
             directon = "right-under";
         }
     }
 
-    if(points[0][0] < -1 + radius){
-        if(directon === "left-under"){
+    if (points[0][0] < -1 + radius) {
+        if (directon === "left-under") {
             directon = "right-under";
         }
-        if(directon === "left-upper"){
+        if (directon === "left-upper") {
             directon = "right-upper";
         }
     }
 
-    
 
-    if(points[0][0] > verticesPanel[0][0] && points[0][0] < verticesPanel[3][0]){
-        if(points[0][1] < verticesPanel[1][1] && points[0][1] > verticesPanel[0][1]){
-            if(directon === "left-under"){
-                directon = "left-upper";
-            }         
-            if(directon === "right-under"){
-                directon = "right-upper";
+
+    if (points[0][0] > verticesPanel[0][0] && points[0][0] < verticesPanel[3][0]) {
+        if (points[0][1] < verticesPanel[1][1] && points[0][1] > verticesPanel[0][1]) {
+
+
+            var circle = points[0][0];
+            var left = verticesPanel[0][0];
+            var right = verticesPanel[3][0];
+
+            var closer = closest(circle, [left, right]);
+
+
+            if (directon === "left-under") {
+                if (closer === right) {
+                    directon = "right-upper";
+                } else {
+                    directon = "left-upper";
+                }
+
+            }
+            if (directon === "right-under") {
+                if(closer === left){
+                    directon = "left-upper";
+                } else {
+                    directon = "right-upper";
+                }
             }
             score++;
         }
     }
 
-    if(points[0][1] < -1){
+    if (points[0][1] < -1) {
         points = [];
-        center = vec2(Math.random(),0);
+        center = vec2(Math.random(), 0);
         points.push(center);
         createCirclePoints(center, radius, numCirclePoints);
         score--;
 
-        console.log()
-        
     }
 
     scoreBoard.textContent = score;
@@ -259,6 +297,7 @@ function render() {
 
     // Draw Panel    
     gl.bindBuffer(gl.ARRAY_BUFFER, buferrIdPanel);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(verticesPanel));
     gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
     gl.uniform4fv(locColor, flatten(colorA));
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -270,6 +309,13 @@ function render() {
     gl.drawArrays(gl.TRIANGLE_FAN, 0, points.length);
 
 
+    //draw squares
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdSquare);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(verticesSquare1));
+    gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform4fv(locColor, flatten(colorA));
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+
 
     window.requestAnimFrame(render);
 
@@ -280,7 +326,21 @@ function createCirclePoints(cent, rad, k) {
     var dAngle = 2 * Math.PI / k;
     for (i = k; i >= 0; i--) {
         a = i * dAngle;
-        var p = vec2(rad * Math.sin(a) + cent[0] , rad * Math.cos(a) + cent[1]);
+        var p = vec2(rad * Math.sin(a) + cent[0], rad * Math.cos(a) + cent[1]);
         points.push(p);
     }
+}
+
+// find out wich number is closer
+function closest(num, arr) {
+    var curr = arr[0];
+    var diff = Math.abs(num - curr);
+    for (var val = 0; val < arr.length; val++) {
+        var newdiff = Math.abs(num - arr[val]);
+        if (newdiff < diff) {
+            diff = newdiff;
+            curr = arr[val];
+        }
+    }
+    return curr;
 }
