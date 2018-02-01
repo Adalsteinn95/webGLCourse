@@ -66,10 +66,24 @@ window.onload = function init() {
 
     /* squares */
     verticesSquare1 = [
-        vec2(-0.1, 0.33),
-        vec2(-0.1, 0.23),
-        vec2(0.1, 0.23),
-        vec2(0.1, 0.33)
+        vec2(-0.1, 0.53),
+        vec2(-0.1, 0.48),
+        vec2(0.1, 0.48),
+        vec2(0.1, 0.53)
+    ];
+
+    verticesSquare2 = [
+        vec2(-0.6, 0.53),
+        vec2(-0.6, 0.48),
+        vec2(-0.4, 0.48),
+        vec2(-0.4, 0.53)
+    ];
+
+    verticesSquare3 = [
+        vec2(0.4, 0.53),
+        vec2(0.4, 0.48),
+        vec2(0.6, 0.48),
+        vec2(0.6, 0.53)
     ];
 
     scoreBoard = document.querySelector('h1');
@@ -104,6 +118,14 @@ window.onload = function init() {
     bufferIdSquare = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdSquare);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(verticesSquare1), gl.STATIC_DRAW);
+
+    bufferIdSquare2 = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdSquare2);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(verticesSquare2), gl.STATIC_DRAW);
+
+    bufferIdSquare3 = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdSquare3);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(verticesSquare3), gl.STATIC_DRAW);
 
     // Get location of shader variable vPosition
     locPosition = gl.getAttribLocation(program, "vPosition");
@@ -182,11 +204,13 @@ function render() {
      * 
      */
 
-    var drx = 0.01 + offsetx;
-    var dry = 0.01 + offsety;
+    var drx = 0.01;
+    var dry = 0.01;
 
-    if (offsetx > 0 || offsety > 0) {
+    if (offsetx > 0 || offsetx < 0) {
         drx = 0.01 + offsetx;
+    }        
+    if(offsety > 0 || offsety < 0){
         dry = 0.01 + offsety;
     }
 
@@ -218,7 +242,8 @@ function render() {
 
     /* collision on walls */
 
-    if (points[0][0] > 1 - radius) {
+    if (points[0][0] + drx > 1 + radius) {
+
         if (directon === "right-upper") {
             directon = "left-upper";
         }
@@ -227,7 +252,7 @@ function render() {
         }
     }
 
-    if (points[0][1] > 1 - radius) {
+    if (points[0][1] + dry > 1 + radius) {
         if (directon === "left-upper") {
             directon = "left-under";
         }
@@ -246,10 +271,9 @@ function render() {
     }
 
 
-
-    if (points[0][0] > verticesPanel[0][0] && points[0][0] < verticesPanel[3][0]) {
-        if (points[0][1] < verticesPanel[1][1] && points[0][1] > verticesPanel[0][1]) {
-
+    /* collision for panel */
+    if (points[0][0] + radius > verticesPanel[0][0] && points[0][0] + radius < verticesPanel[3][0]) {
+        if (points[0][1] + radius < verticesPanel[1][1] && points[0][1] - radius > verticesPanel[0][1]) {
 
             var circle = points[0][0];
             var left = verticesPanel[0][0];
@@ -275,6 +299,37 @@ function render() {
             }
             score++;
         }
+    }
+
+    for(var i=0;i < 3;i++){
+        var check = [];
+        if(i===0){
+            check = [verticesSquare1[0][0],verticesSquare1[3][0],verticesSquare1[0][1],verticesSquare1[1][1]];
+        } else if(i===1){
+            check = [verticesSquare2[0][0],verticesSquare2[3][0],verticesSquare2[0][1],verticesSquare2[1][1]];
+        } else {
+            check = [verticesSquare3[0][0],verticesSquare3[3][0],verticesSquare3[0][1],verticesSquare3[1][1]];
+        }
+        if (points[0][0] + radius > check[0] && points[0][0] + radius < check[1]) {
+            if (points[0][1] + radius > check[3] && points[0][1] - radius  < check[2]) {
+                if (directon === "left-under") {
+                    directon = "left-upper";
+                }
+                else if (directon === "right-under") {
+                    directon = "right-upper";
+                }
+                else if (directon === "left-upper") {
+                    directon = "left-under";
+                }
+                else if (directon === "right-upper") {
+                    directon = "right-under";
+                }
+                
+    
+                score++;
+            }
+        }
+
     }
 
     if (points[0][1] < -1) {
@@ -312,6 +367,18 @@ function render() {
     //draw squares
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdSquare);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(verticesSquare1));
+    gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform4fv(locColor, flatten(colorA));
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdSquare2);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(verticesSquare2));
+    gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform4fv(locColor, flatten(colorA));
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdSquare3);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(verticesSquare3));
     gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
     gl.uniform4fv(locColor, flatten(colorA));
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
