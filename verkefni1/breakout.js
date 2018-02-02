@@ -18,7 +18,11 @@ var bufferIdBall;
 var bufferIdSquare;
 
 var colorA = vec4(1.0, 0.0, 0.0, 1.0);
-var colorB = vec4(0.0, 1.0, 0.0, 1.0);
+var colorB = vec4(1.0, 1.0, 0.0, 0.2);
+var colorC = vec4(0.0, 1.0, 0.0, 1.0);
+var colorD = vec4(0.0, 1.0, 0.0, 1.0);
+
+var multiColor =[ vec4( 1.0, 0.0, 0.0, 1.0 ), vec4( 0.0, 1.0, 0.0, 1.0 ), vec4( 0.0, 0.0, 1.0, 1.0 ) ];
 
 
 /* ball attribute*/
@@ -129,6 +133,7 @@ window.onload = function init() {
 
     // Get location of shader variable vPosition
     locPosition = gl.getAttribLocation(program, "vPosition");
+    gl.vertexAttribPointer( locPosition, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray(locPosition);
 
     locColor = gl.getUniformLocation(program, "rcolor");
@@ -136,10 +141,10 @@ window.onload = function init() {
     window.addEventListener("keydown", function (e) {
         switch (e.keyCode) {
             case 37: // vinstri ör
-                xmove = -0.02;
+                xmove = -0.04;
                 break;
             case 39: // hægri ör
-                xmove = 0.02;
+                xmove = 0.04;
                 break;
             case 87: // w
                 xmove = 0.0;
@@ -272,8 +277,8 @@ function render() {
 
 
     /* collision for panel */
-    if (points[0][0] + radius > verticesPanel[0][0] && points[0][0] + radius < verticesPanel[3][0]) {
-        if (points[0][1] + radius < verticesPanel[1][1] && points[0][1] - radius > verticesPanel[0][1]) {
+    if (points[0][0]  > verticesPanel[0][0] && points[0][0] < verticesPanel[3][0]) {
+        if (points[0][1] - radius  < verticesPanel[1][1] && points[0][1] - radius > verticesPanel[0][1]) {
 
             var circle = points[0][0];
             var left = verticesPanel[0][0];
@@ -309,8 +314,8 @@ function render() {
         } else {
             check = [verticesSquare3[0][0], verticesSquare3[3][0], verticesSquare3[0][1], verticesSquare3[1][1]];
         }
-        if (points[0][0] + radius > check[0] && points[0][0] + radius < check[1]) {
-            if (points[0][1] + radius > check[3] && points[0][1] - radius < check[2]) {
+        if (points[0][0] + radius > check[0] && points[0][0] + radius < check[1] || points[0][0] - radius > check[0] && points[0][0] - radius < check[1]) {
+            if (points[0][1] + radius > check[3] && points[0][1] + radius < check[2] || points[0][1] - radius > check[3] && points[0][1] - radius < check[2]) {
                 if (directon === "left-under") {
                     directon = "left-upper";
                 } else if (directon === "right-under") {
@@ -398,7 +403,7 @@ function render() {
     // Draw Ball
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdBall);
     gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
-    gl.uniform4fv(locColor, flatten(colorB));
+    gl.uniform4fv(locColor, flatten(multiColor));
     gl.drawArrays(gl.TRIANGLE_FAN, 0, points.length);
 
 
@@ -406,7 +411,7 @@ function render() {
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdSquare);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(verticesSquare1));
     gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
-    gl.uniform4fv(locColor, flatten(colorA));
+    gl.uniform4fv(locColor, flatten(colorB));
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdSquare2);
@@ -422,7 +427,12 @@ function render() {
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
 
-    window.requestAnimFrame(render);
+    if(score === 10){
+        confirm("Byrja nýjan leik?");
+        location.reload();
+    } else {
+        window.requestAnimFrame(render);
+    }
 
 }
 
