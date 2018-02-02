@@ -24,7 +24,7 @@ var colorB = vec4(0.0, 1.0, 0.0, 1.0);
 /* ball attribute*/
 
 var numCirclePoints = 30;
-var radius = 0.008;
+var radius = 0.02;
 var center = vec2(0.5, 0);
 
 var points = [];
@@ -209,8 +209,8 @@ function render() {
 
     if (offsetx > 0 || offsetx < 0) {
         drx = 0.01 + offsetx;
-    }        
-    if(offsety > 0 || offsety < 0){
+    }
+    if (offsety > 0 || offsety < 0) {
         dry = 0.01 + offsety;
     }
 
@@ -242,7 +242,7 @@ function render() {
 
     /* collision on walls */
 
-    if (points[0][0] + drx > 1 + radius) {
+    if (points[0][0] + drx > 1 - radius) {
 
         if (directon === "right-upper") {
             directon = "left-upper";
@@ -252,7 +252,7 @@ function render() {
         }
     }
 
-    if (points[0][1] + dry > 1 + radius) {
+    if (points[0][1] + dry > 1 - radius) {
         if (directon === "left-upper") {
             directon = "left-under";
         }
@@ -291,41 +291,68 @@ function render() {
 
             }
             if (directon === "right-under") {
-                if(closer === left){
+                if (closer === left) {
                     directon = "left-upper";
                 } else {
                     directon = "right-upper";
                 }
             }
-            score++;
         }
     }
 
-    for(var i=0;i < 3;i++){
+    for (var i = 0; i < 3; i++) {
         var check = [];
-        if(i===0){
-            check = [verticesSquare1[0][0],verticesSquare1[3][0],verticesSquare1[0][1],verticesSquare1[1][1]];
-        } else if(i===1){
-            check = [verticesSquare2[0][0],verticesSquare2[3][0],verticesSquare2[0][1],verticesSquare2[1][1]];
+        if (i === 0) {
+            check = [verticesSquare1[0][0], verticesSquare1[3][0], verticesSquare1[0][1], verticesSquare1[1][1]];
+        } else if (i === 1) {
+            check = [verticesSquare2[0][0], verticesSquare2[3][0], verticesSquare2[0][1], verticesSquare2[1][1]];
         } else {
-            check = [verticesSquare3[0][0],verticesSquare3[3][0],verticesSquare3[0][1],verticesSquare3[1][1]];
+            check = [verticesSquare3[0][0], verticesSquare3[3][0], verticesSquare3[0][1], verticesSquare3[1][1]];
         }
         if (points[0][0] + radius > check[0] && points[0][0] + radius < check[1]) {
-            if (points[0][1] + radius > check[3] && points[0][1] - radius  < check[2]) {
+            if (points[0][1] + radius > check[3] && points[0][1] - radius < check[2]) {
                 if (directon === "left-under") {
                     directon = "left-upper";
-                }
-                else if (directon === "right-under") {
+                } else if (directon === "right-under") {
                     directon = "right-upper";
-                }
-                else if (directon === "left-upper") {
+                } else if (directon === "left-upper") {
                     directon = "left-under";
-                }
-                else if (directon === "right-upper") {
+                } else if (directon === "right-upper") {
                     directon = "right-under";
                 }
-                
-    
+
+                var b = generateRandomNumber(0,0.9);
+
+                if (i === 0) {
+                    var a = generateRandomNumber(-0.3,0.3);
+
+                    verticesSquare1 = [
+                        vec2(a, b+0.05),
+                        vec2(a, b),
+                        vec2(a+0.2, b),
+                        vec2(a+0.2, b+0.05)
+                    ];
+
+                } else if (i === 1) {
+                    var a = generateRandomNumber(-0.9,-0.4);
+
+                    verticesSquare2 = [
+                        vec2(a, b+0.05),
+                        vec2(a, b),
+                        vec2(a+0.2, b),
+                        vec2(a+0.2, b+0.05)
+                    ];
+                } else {
+                    var a = generateRandomNumber(0.4,0.9);
+
+                    verticesSquare3 = [
+                        vec2(a, b+0.05),
+                        vec2(a, b),
+                        vec2(a+0.2, b),
+                        vec2(a+0.2, b+0.05)
+                    ];
+                }
+
                 score++;
             }
         }
@@ -334,8 +361,19 @@ function render() {
 
     if (points[0][1] < -1) {
         points = [];
-        center = vec2(Math.random(), 0);
-        points.push(center);
+        center = vec2(generateRandomNumber(-1,1), 0);
+
+        var randomDirection = Math.floor(Math.random() * 4) + 1;
+
+        if(randomDirection === 1){
+            directon = "left-upper";
+        } else if(randomDirection === 2){
+            directon = "left-under";
+        } else if(randomDirection === 3){
+            directon = "right-upper";
+        } else {
+            directon = "right-under";
+        }
         createCirclePoints(center, radius, numCirclePoints);
         score--;
 
@@ -393,7 +431,7 @@ function createCirclePoints(cent, rad, k) {
     var dAngle = 2 * Math.PI / k;
     for (i = k; i >= 0; i--) {
         a = i * dAngle;
-        var p = vec2(rad * Math.sin(a) + cent[0], rad * Math.cos(a) + cent[1]);
+        var p = vec2(0.6*rad * Math.sin(a) + cent[0], rad * Math.cos(a) + cent[1]);
         points.push(p);
     }
 }
@@ -411,3 +449,9 @@ function closest(num, arr) {
     }
     return curr;
 }
+
+/* random number generator */
+function generateRandomNumber(min, max) {
+    var randomNumber = Math.random() * (max - min) + min;
+    return randomNumber;
+};
