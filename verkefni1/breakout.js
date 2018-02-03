@@ -17,12 +17,16 @@ var buferrIdPanel;
 var bufferIdBall;
 var bufferIdSquare;
 
-var colorA = vec4(1.0, 0.0, 0.0, 1.0);
-var colorB = vec4(1.0, 1.0, 0.0, 0.2);
-var colorC = vec4(0.0, 1.0, 0.0, 1.0);
-var colorD = vec4(0.0, 1.0, 0.0, 1.0);
+var red = vec4(1.0, 0.0, 0.0, 1.0);
+var green = vec4(0.0, 1.0, 0.0, 1.0);
+var blue = vec4(0.0, 0.0, 1.0, 1.0);
+var lightBlue = vec4(0.0, 1.0, 1.0, 1.0);
+var yellow = vec4(1.0, 1.0, 0.0, 1.0);
+var purple = vec4(1.0, 0, 1.0, 1.0);
 
-var multiColor =[ vec4( 1.0, 0.0, 0.0, 1.0 ), vec4( 0.0, 1.0, 0.0, 1.0 ), vec4( 0.0, 0.0, 1.0, 1.0 ) ];
+
+var colours = [red, green, blue, lightBlue, yellow, purple];
+
 
 
 /* ball attribute*/
@@ -50,6 +54,7 @@ var prevX;
 var prevY;
 var nextX;
 var prevX;
+
 
 window.onload = function init() {
     var canvas = document.getElementById("gl-canvas");
@@ -88,6 +93,70 @@ window.onload = function init() {
         vec2(0.4, 0.48),
         vec2(0.6, 0.48),
         vec2(0.6, 0.53)
+    ];
+
+    pointScore = [
+        [
+            vec2(-0.9, 0.9),
+            vec2(-0.9, 0.6),
+            vec2(-0.88, 0.6),
+            vec2(-0.88, 0.9)
+        ],
+        [
+            vec2(-0.86, 0.9),
+            vec2(-0.86, 0.6),
+            vec2(-0.84, 0.6),
+            vec2(-0.84, 0.9)
+        ],
+        [
+            vec2(-0.82, 0.9),
+            vec2(-0.82, 0.6),
+            vec2(-0.80, 0.6),
+            vec2(-0.80, 0.9)
+        ],
+        [
+            vec2(-0.78, 0.9),
+            vec2(-0.78, 0.6),
+            vec2(-0.76, 0.6),
+            vec2(-0.76, 0.9)
+        ],
+        [
+            vec2(-0.74, 0.9),
+            vec2(-0.74, 0.6),
+            vec2(-0.72, 0.6),
+            vec2(-0.72, 0.9)
+        ],
+        [
+            vec2(-0.7, 0.9),
+            vec2(-0.7, 0.6),
+            vec2(-0.68, 0.6),
+            vec2(-0.68, 0.9)
+        ],
+        [
+            vec2(-0.66, 0.9),
+            vec2(-0.66, 0.6),
+            vec2(-0.64, 0.6),
+            vec2(-0.64, 0.9)
+        ],
+        [
+            vec2(-0.62, 0.9),
+            vec2(-0.62, 0.6),
+            vec2(-0.60, 0.6),
+            vec2(-0.60, 0.9)
+        ],
+        [
+            vec2(-0.58, 0.9),
+            vec2(-0.58, 0.6),
+            vec2(-0.56, 0.6),
+            vec2(-0.56, 0.9)
+        ],
+        [
+            vec2(-0.54, 0.9),
+            vec2(-0.54, 0.6),
+            vec2(-0.52, 0.6),
+            vec2(-0.52, 0.9)
+        ]
+
     ];
 
     scoreBoard = document.querySelector('h1');
@@ -131,9 +200,16 @@ window.onload = function init() {
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdSquare3);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(verticesSquare3), gl.STATIC_DRAW);
 
+
+    /* define scores buffer */
+
+    bufferIdScore = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdScore);
+    gl.bufferData(gl.ARRAY_BUFFER, 10000, gl.STATIC_DRAW);
+
     // Get location of shader variable vPosition
     locPosition = gl.getAttribLocation(program, "vPosition");
-    gl.vertexAttribPointer( locPosition, 4, gl.FLOAT, false, 0, 0 );
+    gl.vertexAttribPointer(locPosition, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(locPosition);
 
     locColor = gl.getUniformLocation(program, "rcolor");
@@ -277,8 +353,8 @@ function render() {
 
 
     /* collision for panel */
-    if (points[0][0]  > verticesPanel[0][0] && points[0][0] < verticesPanel[3][0]) {
-        if (points[0][1] - radius  < verticesPanel[1][1] && points[0][1] - radius > verticesPanel[0][1]) {
+    if (points[0][0] > verticesPanel[0][0] && points[0][0] < verticesPanel[3][0]) {
+        if (points[0][1] - radius < verticesPanel[1][1] && points[0][1] - radius > verticesPanel[0][1]) {
 
             var circle = points[0][0];
             var left = verticesPanel[0][0];
@@ -326,35 +402,35 @@ function render() {
                     directon = "right-under";
                 }
 
-                var b = generateRandomNumber(0,0.9);
+                var b = generateRandomNumber(0, 0.9);
 
                 if (i === 0) {
-                    var a = generateRandomNumber(-0.3,0.3);
+                    var a = generateRandomNumber(-0.3, 0.3);
 
                     verticesSquare1 = [
-                        vec2(a, b+0.05),
+                        vec2(a, b + 0.05),
                         vec2(a, b),
-                        vec2(a+0.2, b),
-                        vec2(a+0.2, b+0.05)
+                        vec2(a + 0.2, b),
+                        vec2(a + 0.2, b + 0.05)
                     ];
 
                 } else if (i === 1) {
-                    var a = generateRandomNumber(-0.9,-0.4);
+                    var a = generateRandomNumber(-0.9, -0.4);
 
                     verticesSquare2 = [
-                        vec2(a, b+0.05),
+                        vec2(a, b + 0.05),
                         vec2(a, b),
-                        vec2(a+0.2, b),
-                        vec2(a+0.2, b+0.05)
+                        vec2(a + 0.2, b),
+                        vec2(a + 0.2, b + 0.05)
                     ];
                 } else {
-                    var a = generateRandomNumber(0.4,0.9);
+                    var a = generateRandomNumber(0.4, 0.9);
 
                     verticesSquare3 = [
-                        vec2(a, b+0.05),
+                        vec2(a, b + 0.05),
                         vec2(a, b),
-                        vec2(a+0.2, b),
-                        vec2(a+0.2, b+0.05)
+                        vec2(a + 0.2, b),
+                        vec2(a + 0.2, b + 0.05)
                     ];
                 }
 
@@ -366,15 +442,15 @@ function render() {
 
     if (points[0][1] < -1) {
         points = [];
-        center = vec2(generateRandomNumber(-1,1), 0);
+        center = vec2(generateRandomNumber(-1, 1), 0);
 
         var randomDirection = Math.floor(Math.random() * 4) + 1;
 
-        if(randomDirection === 1){
+        if (randomDirection === 1) {
             directon = "left-upper";
-        } else if(randomDirection === 2){
+        } else if (randomDirection === 2) {
             directon = "left-under";
-        } else if(randomDirection === 3){
+        } else if (randomDirection === 3) {
             directon = "right-upper";
         } else {
             directon = "right-under";
@@ -387,6 +463,15 @@ function render() {
     scoreBoard.textContent = score;
 
 
+    for (let i = 0; i < score; i++) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdScore);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(pointScore[i]));
+        gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
+        gl.uniform4fv(locColor, flatten(purple));
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    }
+
+
     // HH: Send the new coordinates over to graphics memory
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdBall);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(points));
@@ -397,13 +482,15 @@ function render() {
     gl.bindBuffer(gl.ARRAY_BUFFER, buferrIdPanel);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(verticesPanel));
     gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
-    gl.uniform4fv(locColor, flatten(colorA));
+    gl.uniform4fv(locColor, flatten(purple));
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
     // Draw Ball
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdBall);
     gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
-    gl.uniform4fv(locColor, flatten(multiColor));
+
+    var randomColour = Math.floor(Math.random() * 5) + 0;
+    gl.uniform4fv(locColor, flatten(colours[randomColour]));
     gl.drawArrays(gl.TRIANGLE_FAN, 0, points.length);
 
 
@@ -411,23 +498,23 @@ function render() {
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdSquare);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(verticesSquare1));
     gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
-    gl.uniform4fv(locColor, flatten(colorB));
+    gl.uniform4fv(locColor, flatten(red));
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdSquare2);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(verticesSquare2));
     gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
-    gl.uniform4fv(locColor, flatten(colorA));
+    gl.uniform4fv(locColor, flatten(yellow));
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdSquare3);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(verticesSquare3));
     gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
-    gl.uniform4fv(locColor, flatten(colorA));
+    gl.uniform4fv(locColor, flatten(blue));
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
 
-    if(score === 10){
+    if (score === 10) {
         confirm("Byrja nýjan leik?");
         location.reload();
     } else {
@@ -441,7 +528,7 @@ function createCirclePoints(cent, rad, k) {
     var dAngle = 2 * Math.PI / k;
     for (i = k; i >= 0; i--) {
         a = i * dAngle;
-        var p = vec2(0.6*rad * Math.sin(a) + cent[0], rad * Math.cos(a) + cent[1]);
+        var p = vec2(0.6 * rad * Math.sin(a) + cent[0], rad * Math.cos(a) + cent[1]);
         points.push(p);
     }
 }
