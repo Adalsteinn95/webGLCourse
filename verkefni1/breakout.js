@@ -64,6 +64,7 @@ window.onload = function init() {
         alert("WebGL isn't available");
     }
 
+    var randomSize = generateRandomNumber(-1, -0.5);
 
     // Two triangles
     verticesPanel = [
@@ -74,25 +75,35 @@ window.onload = function init() {
     ];
 
     /* squares */
+
+    var randomSize = generateRandomNumber(-0.3, 0);
+    var randomSize2 = generateRandomNumber(0.05, 0.3);
+
     verticesSquare1 = [
-        vec2(-0.1, 0.53),
-        vec2(-0.1, 0.48),
-        vec2(0.1, 0.48),
-        vec2(0.1, 0.53)
+        vec2(randomSize, 0.53),
+        vec2(randomSize, 0.48),
+        vec2(randomSize2, 0.48),
+        vec2(randomSize2, 0.53)
     ];
+
+    var randomSize = generateRandomNumber(-1, -0.75);
+    var randomSize2 = generateRandomNumber(-0.7, -0.4);
 
     verticesSquare2 = [
-        vec2(-0.6, 0.53),
-        vec2(-0.6, 0.48),
-        vec2(-0.4, 0.48),
-        vec2(-0.4, 0.53)
+        vec2(randomSize, 0.53),
+        vec2(randomSize, 0.48),
+        vec2(randomSize2, 0.48),
+        vec2(randomSize2, 0.53)
     ];
 
+    var randomSize = generateRandomNumber(0.4, 0.6);
+    var randomSize2 = generateRandomNumber(0.65, 1);
+
     verticesSquare3 = [
-        vec2(0.4, 0.53),
-        vec2(0.4, 0.48),
-        vec2(0.6, 0.48),
-        vec2(0.6, 0.53)
+        vec2(randomSize, 0.53),
+        vec2(randomSize, 0.48),
+        vec2(randomSize2, 0.48),
+        vec2(randomSize2, 0.53)
     ];
 
     pointScore = [
@@ -407,32 +418,38 @@ function render() {
                 var b = generateRandomNumber(0, 0.9);
 
                 if (i === 0) {
-                    var a = generateRandomNumber(-0.3, 0.3);
+
+                    var randomSize = generateRandomNumber(-0.4, 0);
+                    var randomSize2 = generateRandomNumber(0.02, 0.3);
 
                     verticesSquare1 = [
-                        vec2(a, b + 0.05),
-                        vec2(a, b),
-                        vec2(a + 0.2, b),
-                        vec2(a + 0.2, b + 0.05)
+                        vec2(randomSize, b + 0.05),
+                        vec2(randomSize, b),
+                        vec2(randomSize2 + 0.2, b),
+                        vec2(randomSize2 + 0.2, b + 0.05)
                     ];
 
                 } else if (i === 1) {
-                    var a = generateRandomNumber(-0.9, -0.4);
+
+                    var randomSize = generateRandomNumber(-1, -0.8);
+                    var randomSize2 = generateRandomNumber(-0.78, -0.5);
 
                     verticesSquare2 = [
-                        vec2(a, b + 0.05),
-                        vec2(a, b),
-                        vec2(a + 0.2, b),
-                        vec2(a + 0.2, b + 0.05)
+                        vec2(randomSize, b + 0.05),
+                        vec2(randomSize, b),
+                        vec2(randomSize2 + 0.2, b),
+                        vec2(randomSize2 + 0.2, b + 0.05)
                     ];
                 } else {
-                    var a = generateRandomNumber(0.4, 0.9);
+
+                    var randomSize = generateRandomNumber(0.4, 0.6);
+                    var randomSize2 = generateRandomNumber(0.62, 0.8);
 
                     verticesSquare3 = [
-                        vec2(a, b + 0.05),
-                        vec2(a, b),
-                        vec2(a + 0.2, b),
-                        vec2(a + 0.2, b + 0.05)
+                        vec2(randomSize, b + 0.05),
+                        vec2(randomSize, b),
+                        vec2(randomSize2 + 0.2, b),
+                        vec2(randomSize2 + 0.2, b + 0.05)
                     ];
                 }
 
@@ -463,6 +480,7 @@ function render() {
     }
 
     scoreBoard.textContent = score;
+
     for (let i = 0; i < score; i++) {
         gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdScore);
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(pointScore[i]));
@@ -472,7 +490,7 @@ function render() {
     }
 
 
-    // HH: Send the new coordinates over to graphics memory
+
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdBall);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(points));
 
@@ -488,7 +506,6 @@ function render() {
     // Draw Ball
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdBall);
     gl.vertexAttribPointer(locPosition, 2, gl.FLOAT, false, 0, 0);
-
     var randomColour = Math.floor(Math.random() * 5) + 0;
     gl.uniform4fv(locColor, flatten(colours[randomColour]));
     gl.drawArrays(gl.TRIANGLE_FAN, 0, points.length);
@@ -515,8 +532,10 @@ function render() {
 
 
     if (score === 10) {
-        confirm("Byrja nýjan leik?");
+        window.requestAnimFrame(render);
+        confirm("Start new game?");
         location.reload();
+        score = 0;
     } else {
         window.requestAnimFrame(render);
     }
@@ -554,32 +573,35 @@ function generateRandomNumber(min, max) {
 };
 
 setInterval(() => {
-    var a = generateRandomNumber(-0.4, 0.3);
-    var b = generateRandomNumber(0, 0.9);
+    var randomSize = generateRandomNumber(-0.4, 0);
+    var randomSize2 = generateRandomNumber(0.02, 0.3);
+    var b = generateRandomNumber(-0.2, 0.9);
     verticesSquare1 = [
-        vec2(a, b + 0.05),
-        vec2(a, b),
-        vec2(a + 0.2, b),
-        vec2(a + 0.2, b + 0.05)
+        vec2(randomSize, b + 0.05),
+        vec2(randomSize, b),
+        vec2(randomSize2 + 0.2, b),
+        vec2(randomSize2 + 0.2, b + 0.05)
     ];
 
-    var aa = generateRandomNumber(-1, -0.4);
-    var bb = generateRandomNumber(0, 0.9);
+    var randomSize = generateRandomNumber(-1, -0.8);
+    var randomSize2 = generateRandomNumber(-0.78, -0.5);
+    var bb = generateRandomNumber(-0.2, 0.9);
 
     verticesSquare2 = [
-        vec2(aa, bb + 0.05),
-        vec2(aa, bb),
-        vec2(aa + 0.2, bb),
-        vec2(aa + 0.2, bb + 0.05)
+        vec2(randomSize, bb + 0.05),
+        vec2(randomSize, bb),
+        vec2(randomSize2 + 0.2, bb),
+        vec2(randomSize2 + 0.2, bb + 0.05)
     ];
 
-    var aaa = generateRandomNumber(0.4, 0.8);
-    var bbb = generateRandomNumber(0, 0.9);
+    var randomSize = generateRandomNumber(0.4, 0.6);
+    var randomSize2 = generateRandomNumber(0.62, 0.8);
+    var bbb = generateRandomNumber(-0.2, 0.9);
 
     verticesSquare3 = [
-        vec2(aaa, bbb + 0.05),
-        vec2(aaa, bbb),
-        vec2(aaa + 0.2, bbb),
-        vec2(aaa + 0.2, bbb + 0.05)
+        vec2(randomSize, bbb + 0.05),
+        vec2(randomSize, bbb),
+        vec2(randomSize2 + 0.2, bbb),
+        vec2(randomSize2 + 0.2, bbb + 0.05)
     ];
-}, 5000);
+}, 10);
