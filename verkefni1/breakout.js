@@ -97,64 +97,64 @@ window.onload = function init() {
 
     pointScore = [
         [
-            vec2(-0.9, 0.9),
-            vec2(-0.9, 0.6),
+            vec2(-0.93, 0.85),
+            vec2(-0.93, 0.6),
+            vec2(-0.91, 0.6),
+            vec2(-0.91, 0.85)
+        ],
+        [
+            vec2(-0.88, 0.85),
             vec2(-0.88, 0.6),
-            vec2(-0.88, 0.9)
-        ],
-        [
-            vec2(-0.86, 0.9),
             vec2(-0.86, 0.6),
-            vec2(-0.84, 0.6),
-            vec2(-0.84, 0.9)
+            vec2(-0.86, 0.85)
         ],
         [
-            vec2(-0.82, 0.9),
-            vec2(-0.82, 0.6),
-            vec2(-0.80, 0.6),
-            vec2(-0.80, 0.9)
+            vec2(-0.83, 0.85),
+            vec2(-0.83, 0.6),
+            vec2(-0.81, 0.6),
+            vec2(-0.81, 0.85)
         ],
         [
-            vec2(-0.78, 0.9),
+            vec2(-0.78, 0.85),
             vec2(-0.78, 0.6),
             vec2(-0.76, 0.6),
-            vec2(-0.76, 0.9)
+            vec2(-0.76, 0.85)
         ],
         [
-            vec2(-0.74, 0.9),
-            vec2(-0.74, 0.6),
-            vec2(-0.72, 0.6),
-            vec2(-0.72, 0.9)
+            vec2(-0.95, 0.65),
+            vec2(-0.95, 0.6),
+            vec2(-0.74, 0.8),
+            vec2(-0.74, 0.85)
         ],
         [
-            vec2(-0.7, 0.9),
-            vec2(-0.7, 0.6),
-            vec2(-0.68, 0.6),
-            vec2(-0.68, 0.9)
+            vec2(-0.63, 0.85),
+            vec2(-0.63, 0.6),
+            vec2(-0.61, 0.6),
+            vec2(-0.61, 0.85)
         ],
         [
-            vec2(-0.66, 0.9),
-            vec2(-0.66, 0.6),
-            vec2(-0.64, 0.6),
-            vec2(-0.64, 0.9)
-        ],
-        [
-            vec2(-0.62, 0.9),
-            vec2(-0.62, 0.6),
-            vec2(-0.60, 0.6),
-            vec2(-0.60, 0.9)
-        ],
-        [
-            vec2(-0.58, 0.9),
+            vec2(-0.58, 0.85),
             vec2(-0.58, 0.6),
             vec2(-0.56, 0.6),
-            vec2(-0.56, 0.9)
+            vec2(-0.56, 0.85)
         ],
         [
-            vec2(-0.54, 0.9),
-            vec2(-0.54, 0.6),
-            vec2(-0.52, 0.6),
-            vec2(-0.52, 0.9)
+            vec2(-0.53, 0.85),
+            vec2(-0.53, 0.6),
+            vec2(-0.51, 0.6),
+            vec2(-0.51, 0.85)
+        ],
+        [
+            vec2(-0.48, 0.85),
+            vec2(-0.48, 0.6),
+            vec2(-0.46, 0.6),
+            vec2(-0.46, 0.85)
+        ],
+        [
+            vec2(-0.65, 0.65),
+            vec2(-0.65, 0.6),
+            vec2(-0.44, 0.8),
+            vec2(-0.44, 0.85)
         ]
 
     ];
@@ -278,6 +278,7 @@ window.onload = function init() {
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
+
     /**
      * 
      * BALL MOVEMENT
@@ -381,6 +382,7 @@ function render() {
         }
     }
 
+
     for (var i = 0; i < 3; i++) {
         var check = [];
         if (i === 0) {
@@ -461,8 +463,6 @@ function render() {
     }
 
     scoreBoard.textContent = score;
-
-
     for (let i = 0; i < score; i++) {
         gl.bindBuffer(gl.ARRAY_BUFFER, bufferIdScore);
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(pointScore[i]));
@@ -552,3 +552,34 @@ function generateRandomNumber(min, max) {
     var randomNumber = Math.random() * (max - min) + min;
     return randomNumber;
 };
+
+setInterval(() => {
+    var a = generateRandomNumber(-0.4, 0.3);
+    var b = generateRandomNumber(0, 0.9);
+    verticesSquare1 = [
+        vec2(a, b + 0.05),
+        vec2(a, b),
+        vec2(a + 0.2, b),
+        vec2(a + 0.2, b + 0.05)
+    ];
+
+    var aa = generateRandomNumber(-1, -0.4);
+    var bb = generateRandomNumber(0, 0.9);
+
+    verticesSquare2 = [
+        vec2(aa, bb + 0.05),
+        vec2(aa, bb),
+        vec2(aa + 0.2, bb),
+        vec2(aa + 0.2, bb + 0.05)
+    ];
+
+    var aaa = generateRandomNumber(0.4, 0.8);
+    var bbb = generateRandomNumber(0, 0.9);
+
+    verticesSquare3 = [
+        vec2(aaa, bbb + 0.05),
+        vec2(aaa, bbb),
+        vec2(aaa + 0.2, bbb),
+        vec2(aaa + 0.2, bbb + 0.05)
+    ];
+}, 5000);
