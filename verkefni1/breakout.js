@@ -604,4 +604,4 @@ setInterval(() => {
         vec2(randomSize2 + 0.2, bbb),
         vec2(randomSize2 + 0.2, bbb + 0.05)
     ];
-}, 10);
+}, 5000);

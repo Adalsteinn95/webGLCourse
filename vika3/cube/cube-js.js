@@ -193,11 +193,6 @@ function render()
 
     var ctm = mat4();
 
-    /*
-    ctm = mult( ctm, rotateX(spinX) );
-    ctm = mult( ctm, rotateY(spinY) );
-    */
-
     ctm = mult( ctm, translate(xDirection,0,0) );
     ctm = mult( ctm, rotateX(spinX) );
     ctm = mult( ctm, rotateY(spinY) );
