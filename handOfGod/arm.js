@@ -52,6 +52,7 @@ var LOWER_ARM_HEIGHT = 2.0;
 var LOWER_ARM_WIDTH = 0.5;
 var UPPER_ARM_HEIGHT = 2.0;
 var UPPER_ARM_WIDTH = 0.5;
+
 var FINGER_POSITION = [2,1,0,-1,-2];
 
 // Shader transformation matrices
@@ -63,9 +64,10 @@ var modelViewMatrix, projectionMatrix;
 var Base = 0;
 var LowerArm = 1;
 var UpperArm = 2;
+var uppestArm = 3;
 
 
-var theta = [0, 0, 0];
+var theta = [0, 0, 0, 0];
 
 var angle = 0;
 
@@ -255,6 +257,14 @@ function upperArm(number) {
 
 //----------------------------------------------------------------------------
 
+function uppestArm(number) {
+    var s = scalem(UPPEST_ARM_WIDTH,UPPEST_ARM_WIDTH,UPPEST_ARM_WIDTH);
+    var instanceMatrix = mult(translate(0.0, 0.5 * UPPEST_ARM_HEIGHT, FINGER_POSITION[number]), s);
+    var t = mult(modelViewMatrix, instanceMatrix);
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(t));
+    gl.drawArrays(gl.TRIANGLES, 0, NumVertices);
+}
+
 
 function lowerArm(number) {
 
@@ -289,6 +299,10 @@ var render = function () {
         modelViewMatrix = mult(modelViewMatrix, translate(0.0, BASE_HEIGHT, 0.0));
         modelViewMatrix = mult(modelViewMatrix, rotate(theta[LowerArm], 0, 0, 1));
         lowerArm(i);
+
+        modelViewMatrix = mult(modelViewMatrix, translate(0.0, LOWER_ARM_HEIGHT, 0.0));
+        modelViewMatrix = mult(modelViewMatrix, rotate(theta[UpperArm], 0, 0, 1));
+        upperArm(i);
 
         modelViewMatrix = mult(modelViewMatrix, translate(0.0, LOWER_ARM_HEIGHT, 0.0));
         modelViewMatrix = mult(modelViewMatrix, rotate(theta[UpperArm], 0, 0, 1));
