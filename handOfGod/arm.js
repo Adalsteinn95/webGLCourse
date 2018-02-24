@@ -228,15 +228,16 @@ window.onload = function init() {
                 theta[1] = Math.max(-80, theta[1] - 5);
                 break;
             case 81: // q - snýr efri armi
-                theta[2] = Math.min(170, theta[2] + 5);
+                theta[2] = Math.min(90, theta[2] + 5);
                 break;
             case 87: // w - snýr efri armi
-                theta[2] = Math.max(-170, theta[2] - 5);
+                theta[2] = Math.max(-90, theta[2] - 5);
                 break;
             case 49: //1
-                theta[3] = Math.max(-80, theta[3] + 5);
+                theta[3] = Math.max(-90, theta[3] - 5);
+                break;
             case 50: //2
-                theta[3] = Math.max(-80, theta[3] - 5)
+                theta[3] = Math.min(90, theta[3] + 5)
         }
     });
 
@@ -311,7 +312,7 @@ var render = function () {
 
 
 
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < 4; i++) {
         mvstack.push(modelViewMatrix);
         modelViewMatrix = mult(mv, rotate(theta[Base], 0, 1, 0));
         base(i);
@@ -330,6 +331,19 @@ var render = function () {
 
         mvstack.pop();
     }
+    mvstack.push(modelViewMatrix);
+    modelViewMatrix = mult(mv, rotate(theta[Base], 0, 1, 0));
+    base(0);
+
+    modelViewMatrix = mult(modelViewMatrix, translate(0.0, BASE_HEIGHT, 0.0));
+    modelViewMatrix = mult(modelViewMatrix, rotate(theta[LowerArm], 0, 0, 1));
+    lowerArm(4);
+
+    modelViewMatrix = mult(modelViewMatrix, translate(0.0, UPPER_ARM_HEIGHT[i], 0.0));
+    modelViewMatrix = mult(modelViewMatrix, rotate(theta[UppestArm], 0, 0, 1));
+    upperArm(4);
+
+    mvstack.pop();
 
     requestAnimFrame(render);
 }
