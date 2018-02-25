@@ -48,10 +48,10 @@ var BASE_HEIGHT = 7.0;
 var BASE_WIDTH = 4.5;
 
 /* finger */
-var LOWER_ARM_HEIGHT = [1, 1.5, 1.7, 1.5, 0.9];
+var LOWER_ARM_HEIGHT = [1, 1.5, 1.7, 1.5, 1];
 var LOWER_ARM_WIDTH = [0.8, 0.8, 0.8, 0.8, 1];
 
-var UPPER_ARM_HEIGHT = [1, 1.5, 2, 1.5, 0.8];
+var UPPER_ARM_HEIGHT = [1, 1.5, 2, 1.5, 1];
 var UPPER_ARM_WIDTH = [0.75, 0.75, 0.75, 0.75, 0.95];
 
 
@@ -70,18 +70,37 @@ var LowerArm = 1;
 var UpperArm = 2;
 var UppestArm = 3;
 
+/* fingers rotation */
+var fingers_rotation = [{
+        rotationUpper: 0,
+        rotationLower: 0,
+        rotationUppest: 0,
+    },
+    {
+        rotationUpper: 0,
+        rotationLower: 0,
+        rotationUppest: 0,
+    },
+    {
+        rotationUpper: 0,
+        rotationLower: 0,
+        rotationUppest: 0,
+    },
+    {
+        rotationUpper: 0,
+        rotationLower: 0,
+        rotationUppest: 0,
+    },
+    {
+        rotationUpper: 0,
+        rotationLower: 0,
+        rotationUppest: 0,
+    }
+]
+
 
 var theta = [0, 0, 0, 0];
 
-var fingers = [{
-    rotation: [theta[LowerArm], theta[UpperArm], theta[UppestArm]]
-}, {
-    rotation: [theta[LowerArm], theta[UpperArm], theta[UppestArm]]
-}, {
-    rotation: [theta[LowerArm], theta[UpperArm], theta[UppestArm]]
-}, {
-    rotation: [theta[LowerArm], theta[UpperArm], theta[UppestArm]]
-}];
 
 var whichFinger = 0;
 
@@ -243,9 +262,9 @@ window.onload = function init() {
 
     // eventlistener for buttons
     var buttons = document.querySelectorAll("Button");
-    for(var i = 0; i < buttons.length;i++){
+    for (var i = 0; i < buttons.length; i++) {
 
-        buttons[i].addEventListener("click", (i)=>{
+        buttons[i].addEventListener("click", (i) => {
             whichFinger = i.path[0].id - 1;
         });
     }
@@ -313,6 +332,7 @@ var render = function () {
 
 
     for (var i = 0; i < 4; i++) {
+
         mvstack.push(modelViewMatrix);
         modelViewMatrix = mult(mv, rotate(theta[Base], 0, 1, 0));
         base(i);
@@ -331,6 +351,7 @@ var render = function () {
 
         mvstack.pop();
     }
+
     mvstack.push(modelViewMatrix);
     modelViewMatrix = mult(mv, rotate(theta[Base], 0, 1, 0));
     base(0);
