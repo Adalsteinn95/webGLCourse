@@ -31,14 +31,14 @@ var vertices = [
 
 // RGBA colors
 var vertexColors = [
-    vec4(0.8, 0.7, 0.6, 1.0), // Skincolour
-    vec4(1.0, 0.0, 0.0, 1.0), // red
-    vec4(1.0, 1.0, 0.0, 1.0), // yellow
-    vec4(0.0, 1.0, 0.0, 1.0), // green
-    vec4(0.0, 0.0, 1.0, 1.0), // blue
-    vec4(1.0, 0.0, 1.0, 1.0), // magenta
-    vec4(0.0, 1.0, 1.0, 1.0), // cyan
-    vec4(1.0, 1.0, 1.0, 1.0) // white
+    vec4(0.8, 0.7, 0.6, 1), // Skincolour
+    vec4(0.9, 0.75, 0.3, 1), // red
+    vec4(0.8, 0.7, 0.4, 1), // yellow
+    vec4(0.9, 0.8, 0.3, 1), // green
+    vec4(0.85, 0.8, 0.4, 1), // blue
+    vec4(0.9, 0.75, 0.5, 1), // magenta
+    vec4(0.9, 0.75, 0.6, 1), // cyan
+    vec4(0.9, 0.8, 0.5, 1) // white
 ];
 
 
@@ -94,12 +94,11 @@ var fingers_rotation = [{
     {
         rotationUpper: 0,
         rotationLower: 0,
-        rotationUppest: 0,
     }
 ]
 
 
-var theta = [0, 0, 0, 0];
+var theta = [0];
 
 
 var whichFinger = 0;
@@ -241,22 +240,22 @@ window.onload = function init() {
                 theta[0] = Math.max(-180, theta[0] - 5);
                 break;
             case 65: // a - snýr neðri armi
-                theta[1] = Math.min(80, theta[1] + 5);
+                fingers_rotation[whichFinger].rotationLower = Math.min(80, fingers_rotation[whichFinger].rotationLower + 5);
                 break;
             case 83: // s - snýr neðri armi
-                theta[1] = Math.max(-80, theta[1] - 5);
+                fingers_rotation[whichFinger].rotationLower = Math.max(-80, fingers_rotation[whichFinger].rotationLower - 5);
                 break;
             case 81: // q - snýr efri armi
-                theta[2] = Math.min(90, theta[2] + 5);
+                fingers_rotation[whichFinger].rotationUpper = Math.min(90, fingers_rotation[whichFinger].rotationUpper + 5);
                 break;
             case 87: // w - snýr efri armi
-                theta[2] = Math.max(-90, theta[2] - 5);
+                fingers_rotation[whichFinger].rotationUpper = Math.max(-90, fingers_rotation[whichFinger].rotationUpper - 5);
                 break;
             case 49: //1
-                theta[3] = Math.max(-90, theta[3] - 5);
+                fingers_rotation[whichFinger].rotationUppest = Math.min(90, fingers_rotation[whichFinger].rotationUppest + 5);
                 break;
             case 50: //2
-                theta[3] = Math.min(90, theta[3] + 5)
+                fingers_rotation[whichFinger].rotationUppest = Math.max(-90, fingers_rotation[whichFinger].rotationUppest - 5);
         }
     });
 
@@ -286,8 +285,8 @@ window.onload = function init() {
 
 
 function base(number) {
-    var s = scalem(UPPER_ARM_WIDTH[number], BASE_HEIGHT, BASE_WIDTH);
-    var instanceMatrix = mult(translate(0.0, 0.5 * BASE_HEIGHT, 0), s);
+    var s = scalem(UPPER_ARM_WIDTH[number], BASE_HEIGHT * 0.5 , BASE_WIDTH * 0.7);
+    var instanceMatrix = mult(translate(0.0, 0.8 * BASE_HEIGHT, 0.1), s);
     var t = mult(modelViewMatrix, instanceMatrix);
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(t));
     gl.drawArrays(gl.TRIANGLES, 0, NumVertices);
@@ -338,15 +337,15 @@ var render = function () {
         base(i);
 
         modelViewMatrix = mult(modelViewMatrix, translate(0.0, BASE_HEIGHT, 0.0));
-        modelViewMatrix = mult(modelViewMatrix, rotate(theta[LowerArm], 0, 0, 1));
+        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotationLower, 0, 0, 1));
         lowerArm(i);
 
         modelViewMatrix = mult(modelViewMatrix, translate(0.0, LOWER_ARM_HEIGHT[i], 0.0));
-        modelViewMatrix = mult(modelViewMatrix, rotate(theta[UpperArm], 0, 0, 1));
+        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotationUpper, 0, 0, 1));
         upperArm(i);
 
         modelViewMatrix = mult(modelViewMatrix, translate(0.0, UPPER_ARM_HEIGHT[i], 0.0));
-        modelViewMatrix = mult(modelViewMatrix, rotate(theta[UppestArm], 0, 0, 1));
+        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotationUppest, 0, 0, 1));
         upperArm(i);
 
         mvstack.pop();
@@ -357,11 +356,11 @@ var render = function () {
     base(0);
 
     modelViewMatrix = mult(modelViewMatrix, translate(0.0, BASE_HEIGHT, 0.0));
-    modelViewMatrix = mult(modelViewMatrix, rotate(theta[LowerArm], 0, 0, 1));
+    modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotationLower, 0, 0, 1));
     lowerArm(4);
 
     modelViewMatrix = mult(modelViewMatrix, translate(0.0, UPPER_ARM_HEIGHT[i], 0.0));
-    modelViewMatrix = mult(modelViewMatrix, rotate(theta[UppestArm], 0, 0, 1));
+    modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotationUpper, 0, 0, 1));
     upperArm(4);
 
     mvstack.pop();
