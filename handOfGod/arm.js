@@ -72,28 +72,36 @@ var UppestArm = 3;
 
 /* fingers rotation */
 var fingers_rotation = [{
-        rotationUpper: 0,
-        rotationLower: 0,
-        rotationUppest: 0,
+        rotateX:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        }
+    },
+    {
+        rotateX:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        }
+    },
+    {
+        rotateX:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        }
+    },
+    {
+        rotateX:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        }
     },
     {
         rotationUpper: 0,
-        rotationLower: 0,
-        rotationUppest: 0,
-    },
-    {
-        rotationUpper: 0,
-        rotationLower: 0,
-        rotationUppest: 0,
-    },
-    {
-        rotationUpper: 0,
-        rotationLower: 0,
-        rotationUppest: 0,
-    },
-    {
-        rotationUpper: 0,
-        rotationLower: 0,
+        rotationLower: -30,
     }
 ]
 
@@ -240,22 +248,22 @@ window.onload = function init() {
                 theta[0] = Math.max(-180, theta[0] - 5);
                 break;
             case 65: // a - snýr neðri armi
-                fingers_rotation[whichFinger].rotationLower = Math.min(80, fingers_rotation[whichFinger].rotationLower + 5);
+                fingers_rotation[whichFinger].rotateX.rotationLower = Math.min(80, fingers_rotation[whichFinger].rotateX.rotationLower + 5);
                 break;
             case 83: // s - snýr neðri armi
-                fingers_rotation[whichFinger].rotationLower = Math.max(-80, fingers_rotation[whichFinger].rotationLower - 5);
+                fingers_rotation[whichFinger].rotateX.rotationLower = Math.max(-80, fingers_rotation[whichFinger].rotateX.rotationLower - 5);
                 break;
             case 81: // q - snýr efri armi
-                fingers_rotation[whichFinger].rotationUpper = Math.min(90, fingers_rotation[whichFinger].rotationUpper + 5);
+                fingers_rotation[whichFinger].rotateX.rotationUpper = Math.min(90, fingers_rotation[whichFinger].rotateX.rotationUpper + 5);
                 break;
             case 87: // w - snýr efri armi
-                fingers_rotation[whichFinger].rotationUpper = Math.max(-90, fingers_rotation[whichFinger].rotationUpper - 5);
+                fingers_rotation[whichFinger].rotateX.rotationUpper = Math.max(-90, fingers_rotation[whichFinger].rotateX.rotationUpper - 5);
                 break;
             case 49: //1
-                fingers_rotation[whichFinger].rotationUppest = Math.min(90, fingers_rotation[whichFinger].rotationUppest + 5);
+                fingers_rotation[whichFinger].rotateX.rotationUppest = Math.min(90, fingers_rotation[whichFinger].rotateX.rotationUppest + 5);
                 break;
             case 50: //2
-                fingers_rotation[whichFinger].rotationUppest = Math.max(-90, fingers_rotation[whichFinger].rotationUppest - 5);
+                fingers_rotation[whichFinger].rotateX.rotationUppest = Math.max(-90, fingers_rotation[whichFinger].rotateX.rotationUppest - 5);
         }
     });
 
@@ -337,15 +345,15 @@ var render = function () {
         base(i);
 
         modelViewMatrix = mult(modelViewMatrix, translate(0.0, BASE_HEIGHT, 0.0));
-        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotationLower, 0, 0, 1));
+        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotateX.rotationLower, 0, 0, 1));
         lowerArm(i);
 
         modelViewMatrix = mult(modelViewMatrix, translate(0.0, LOWER_ARM_HEIGHT[i], 0.0));
-        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotationUpper, 0, 0, 1));
+        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotateX.rotationUpper, 0, 0, 1));
         upperArm(i);
 
         modelViewMatrix = mult(modelViewMatrix, translate(0.0, UPPER_ARM_HEIGHT[i], 0.0));
-        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotationUppest, 0, 0, 1));
+        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotateX.rotationUppest, 0, 0, 1));
         upperArm(i);
 
         mvstack.pop();
@@ -355,13 +363,15 @@ var render = function () {
     modelViewMatrix = mult(mv, rotate(theta[Base], 0, 1, 0));
     base(0);
 
-    modelViewMatrix = mult(modelViewMatrix, translate(0.0, BASE_HEIGHT, 0.0));
-    modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotationLower, 0, 0, 1));
+    
+    modelViewMatrix = mult(modelViewMatrix, translate(0.0, BASE_HEIGHT * 1.1, 0.0));
+    modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotationLower, 45, 0, 1));
     lowerArm(4);
 
     modelViewMatrix = mult(modelViewMatrix, translate(0.0, UPPER_ARM_HEIGHT[i], 0.0));
-    modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotationUpper, 0, 0, 1));
+    modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotationUpper, 45, 0, 1));
     upperArm(4);
+
 
     mvstack.pop();
 
