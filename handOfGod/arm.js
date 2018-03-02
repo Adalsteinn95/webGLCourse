@@ -19,7 +19,7 @@ var points = [];
 var colors = [];
 
 var vertices = [
-    vec4(-0.5, -0.5, 0.5, 1.0),
+    vec4(-0.5, -0.5, 0.5, 1.0), 
     vec4(-0.5, 0.5, 0.5, 1.0),
     vec4(0.5, 0.5, 0.5, 1.0),
     vec4(0.5, -0.5, 0.5, 1.0),
@@ -49,10 +49,10 @@ var BASE_WIDTH = 4.5;
 
 /* finger */
 var LOWER_ARM_HEIGHT = [1, 1.5, 1.7, 1.5, 1];
-var LOWER_ARM_WIDTH = [0.8, 0.8, 0.8, 0.8, 1];
+var LOWER_ARM_WIDTH = [0.8, 0.8, 0.8, 0.8, 0.8];
 
-var UPPER_ARM_HEIGHT = [1, 1.5, 2, 1.5, 1];
-var UPPER_ARM_WIDTH = [0.75, 0.75, 0.75, 0.75, 0.95];
+var UPPER_ARM_HEIGHT = [1, 1.3, 1.7, 1.5, 1];
+var UPPER_ARM_WIDTH = [0.75, 0.75, 0.75, 0.75, 0.75];
 
 
 /* position of the fingers on the hand */
@@ -76,10 +76,13 @@ var fingers_rotation = [{
             rotationUpper: 0,
             rotationLower: 0,
             rotationUppest: 0,
-        }
-    },
-    {
-        rotateX:{
+        },
+        rotateY:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        },
+        rotateZ:{
             rotationUpper: 0,
             rotationLower: 0,
             rotationUppest: 0,
@@ -90,6 +93,16 @@ var fingers_rotation = [{
             rotationUpper: 0,
             rotationLower: 0,
             rotationUppest: 0,
+        },
+        rotateY:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        },
+        rotateZ:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
         }
     },
     {
@@ -97,13 +110,142 @@ var fingers_rotation = [{
             rotationUpper: 0,
             rotationLower: 0,
             rotationUppest: 0,
+        },
+        rotateY:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        },
+        rotateZ:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
         }
     },
     {
-        rotationUpper: 0,
-        rotationLower: -30,
+        rotateX:{
+            rotationUpper: 0,
+            rotationLower:  0,
+            rotationUppest: 0,
+        },
+        rotateY:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        },
+        rotateZ:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        }
+    },
+    {
+        rotateX:{
+            rotationUpper: 0,
+            rotationLower: -40,
+            rotationUppest: 0,
+        },
+        rotateY:{
+            rotationUpper: 0,
+            rotationLower: 90,
+            rotationUppest: 0,
+        },
+        rotateZ:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        }
     }
 ]
+
+function reset(){
+    fingers_rotation = [{
+        rotateX:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        },
+        rotateY:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        },
+        rotateZ:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        }
+    },
+    {
+        rotateX:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        },
+        rotateY:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        },
+        rotateZ:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        }
+    },
+    {
+        rotateX:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        },
+        rotateY:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        },
+        rotateZ:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        }
+    },
+    {
+        rotateX:{
+            rotationUpper: 0,
+            rotationLower:  0,
+            rotationUppest: 0,
+        },
+        rotateY:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        },
+        rotateZ:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        }
+    },
+    {
+        rotateX:{
+            rotationUpper: 0,
+            rotationLower: -40,
+            rotationUppest: 0,
+        },
+        rotateY:{
+            rotationUpper: 0,
+            rotationLower: 90,
+            rotationUppest: 0,
+        },
+        rotateZ:{
+            rotationUpper: 0,
+            rotationLower: 0,
+            rotationUppest: 0,
+        }
+    }
+]
+}
 
 
 var theta = [0];
@@ -248,31 +390,150 @@ window.onload = function init() {
                 theta[0] = Math.max(-180, theta[0] - 5);
                 break;
             case 65: // a - snýr neðri armi
-                fingers_rotation[whichFinger].rotateX.rotationLower = Math.min(80, fingers_rotation[whichFinger].rotateX.rotationLower + 5);
+                if(whichFinger == 4){
+                    fingers_rotation[whichFinger].rotateY.rotationLower = Math.min(90, fingers_rotation[whichFinger].rotateY.rotationLower - 5);
+                } else {
+                    fingers_rotation[whichFinger].rotateX.rotationLower = Math.min(90, fingers_rotation[whichFinger].rotateX.rotationLower + 5);
+                }
                 break;
             case 83: // s - snýr neðri armi
-                fingers_rotation[whichFinger].rotateX.rotationLower = Math.max(-80, fingers_rotation[whichFinger].rotateX.rotationLower - 5);
+                if(whichFinger == 4){
+                    fingers_rotation[whichFinger].rotateY.rotationLower = Math.max(0, fingers_rotation[whichFinger].rotateY.rotationLower + 5);
+                } else {
+                    fingers_rotation[whichFinger].rotateX.rotationLower = Math.max(0, fingers_rotation[whichFinger].rotateX.rotationLower - 5);
+                }
                 break;
             case 81: // q - snýr efri armi
                 fingers_rotation[whichFinger].rotateX.rotationUpper = Math.min(90, fingers_rotation[whichFinger].rotateX.rotationUpper + 5);
                 break;
             case 87: // w - snýr efri armi
-                fingers_rotation[whichFinger].rotateX.rotationUpper = Math.max(-90, fingers_rotation[whichFinger].rotateX.rotationUpper - 5);
+                fingers_rotation[whichFinger].rotateX.rotationUpper = Math.max(0, fingers_rotation[whichFinger].rotateX.rotationUpper - 5);
                 break;
             case 49: //1
                 fingers_rotation[whichFinger].rotateX.rotationUppest = Math.min(90, fingers_rotation[whichFinger].rotateX.rotationUppest + 5);
                 break;
             case 50: //2
-                fingers_rotation[whichFinger].rotateX.rotationUppest = Math.max(-90, fingers_rotation[whichFinger].rotateX.rotationUppest - 5);
+                fingers_rotation[whichFinger].rotateX.rotationUppest = Math.max(0, fingers_rotation[whichFinger].rotateX.rotationUppest - 5);
         }
     });
 
     // eventlistener for buttons
-    var buttons = document.querySelectorAll("Button");
+    var buttons = document.querySelectorAll(".Fingers Button");
     for (var i = 0; i < buttons.length; i++) {
 
         buttons[i].addEventListener("click", (i) => {
             whichFinger = i.path[0].id - 1;
+        });
+    }
+
+    var positions = document.querySelectorAll(".Positions Button");
+    for (var i = 0; i < positions.length; i++) {
+
+        positions[i].addEventListener("click", (i) => {
+
+            reset();
+            if(i.target.id == 1){
+
+            } else if(i.target.id == 2){
+                
+                
+                
+            } else if(i.target.id == 3){
+                for(var i = 0; i < 3; i++){
+                    fingers_rotation[i].rotateX.rotationLower = 90;
+                    fingers_rotation[i].rotateX.rotationUpper = 90;
+                    fingers_rotation[i].rotateX.rotationUppest = 90;
+                }
+
+                fingers_rotation[4].rotateX.rotationUpper = 90;
+            } else if(i.target.id == 4){
+                fingers_rotation = [{
+                    rotateX:{
+                        rotationUpper: 0,
+                        rotationLower: 20,
+                        rotationUppest: 0,
+                    },
+                    rotateY:{
+                        rotationUpper: 0,
+                        rotationLower: 90,
+                        rotationUppest: 0,
+                    },
+                    rotateZ:{
+                        rotationUpper: 0,
+                        rotationLower: 0,
+                        rotationUppest: 0,
+                    }
+                },
+                {
+                    rotateX:{
+                        rotationUpper: 0,
+                        rotationLower: 15,
+                        rotationUppest: 0,
+                    },
+                    rotateY:{
+                        rotationUpper: 0,
+                        rotationLower: 90,
+                        rotationUppest: 0,
+                    },
+                    rotateZ:{
+                        rotationUpper: 0,
+                        rotationLower: 0,
+                        rotationUppest: 0,
+                    }
+                },
+                {
+                    rotateX:{
+                        rotationUpper: 0,
+                        rotationLower: 0,
+                        rotationUppest: 0,
+                    },
+                    rotateY:{
+                        rotationUpper: 0,
+                        rotationLower: 0,
+                        rotationUppest: 0,
+                    },
+                    rotateZ:{
+                        rotationUpper: 0,
+                        rotationLower: 0,
+                        rotationUppest: 0,
+                    }
+                },
+                {
+                    rotateX:{
+                        rotationUpper: 0,
+                        rotationLower:  -10,
+                        rotationUppest: 0,
+                    },
+                    rotateY:{
+                        rotationUpper: 0,
+                        rotationLower: 90,
+                        rotationUppest: 0,
+                    },
+                    rotateZ:{
+                        rotationUpper: 0,
+                        rotationLower: 0,
+                        rotationUppest: 0,
+                    }
+                },
+                {
+                    rotateX:{
+                        rotationUpper: 0,
+                        rotationLower: -40,
+                        rotationUppest: 0,
+                    },
+                    rotateY:{
+                        rotationUpper: 0,
+                        rotationLower: 90,
+                        rotationUppest: 0,
+                    },
+                    rotateZ:{
+                        rotationUpper: 0,
+                        rotationLower: 0,
+                        rotationUppest: 0,
+                    }
+                }
+            ]
+            }
         });
     }
 
@@ -336,6 +597,19 @@ var render = function () {
     mv = mult(mv, rotate(spinX, [1, 0, 0]));
     mv = mult(mv, rotate(spinY, [0, 1, 0]));
 
+    /* movement to new positions */ 
+
+    if(fingers_rotation[4].rotateX.rotationUpper > 90){
+
+    } else {
+        for(var i = 0; i < 4; i++){
+            fingers_rotation[i].rotateX.rotationLower += 1;
+            fingers_rotation[i].rotateX.rotationUpper += 1;
+            fingers_rotation[i].rotateX.rotationUppest += 1;
+        }
+    
+        fingers_rotation[4].rotateX.rotationUpper += 1;
+    }
 
 
     for (var i = 0; i < 4; i++) {
@@ -345,15 +619,15 @@ var render = function () {
         base(i);
 
         modelViewMatrix = mult(modelViewMatrix, translate(0.0, BASE_HEIGHT, 0.0));
-        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotateX.rotationLower, 0, 0, 1));
+        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotateX.rotationLower, fingers_rotation[i].rotateY.rotationLower, fingers_rotation[i].rotateZ.rotationLower, 1));
         lowerArm(i);
 
         modelViewMatrix = mult(modelViewMatrix, translate(0.0, LOWER_ARM_HEIGHT[i], 0.0));
-        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotateX.rotationUpper, 0, 0, 1));
+        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotateX.rotationUpper, fingers_rotation[i].rotateY.rotationUpper, fingers_rotation[i].rotateZ.rotationUpper, 1));
         upperArm(i);
 
         modelViewMatrix = mult(modelViewMatrix, translate(0.0, UPPER_ARM_HEIGHT[i], 0.0));
-        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotateX.rotationUppest, 0, 0, 1));
+        modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotateX.rotationUppest, fingers_rotation[i].rotateY.rotationUpper, fingers_rotation[i].rotateY.rotationUppest, 1));
         upperArm(i);
 
         mvstack.pop();
@@ -364,12 +638,12 @@ var render = function () {
     base(0);
 
     
-    modelViewMatrix = mult(modelViewMatrix, translate(0.0, BASE_HEIGHT * 1.1, 0.0));
-    modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotationLower, 45, 0, 1));
+    modelViewMatrix = mult(modelViewMatrix, translate(0.0, BASE_HEIGHT * 1.1, 0));
+    modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[4].rotateX.rotationLower,fingers_rotation[4].rotateY.rotationLower, fingers_rotation[4].rotateZ.rotationLower, 1));
     lowerArm(4);
 
     modelViewMatrix = mult(modelViewMatrix, translate(0.0, UPPER_ARM_HEIGHT[i], 0.0));
-    modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[i].rotationUpper, 45, 0, 1));
+    modelViewMatrix = mult(modelViewMatrix, rotate(fingers_rotation[4].rotateX.rotationUpper, fingers_rotation[4].rotateY.rotationUpper, fingers_rotation[4].rotateZ.rotationUpper, 1));
     upperArm(4);
 
 
