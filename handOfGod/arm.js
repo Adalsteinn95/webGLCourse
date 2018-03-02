@@ -70,6 +70,10 @@ var LowerArm = 1;
 var UpperArm = 2;
 var UppestArm = 3;
 
+/* hand positions */
+
+var handPositions = "normal";
+
 /* fingers rotation */
 var fingers_rotation = [{
         rotateX:{
@@ -433,106 +437,16 @@ window.onload = function init() {
 
             reset();
             if(i.target.id == 1){
-
+                handPositions = "normal";
             } else if(i.target.id == 2){
                 
-                
+                handPositions = "knuckles";
                 
             } else if(i.target.id == 3){
-                for(var i = 0; i < 3; i++){
-                    fingers_rotation[i].rotateX.rotationLower = 90;
-                    fingers_rotation[i].rotateX.rotationUpper = 90;
-                    fingers_rotation[i].rotateX.rotationUppest = 90;
-                }
-
-                fingers_rotation[4].rotateX.rotationUpper = 90;
+                handPositions = "oneFinger";
             } else if(i.target.id == 4){
-                fingers_rotation = [{
-                    rotateX:{
-                        rotationUpper: 0,
-                        rotationLower: 20,
-                        rotationUppest: 0,
-                    },
-                    rotateY:{
-                        rotationUpper: 0,
-                        rotationLower: 90,
-                        rotationUppest: 0,
-                    },
-                    rotateZ:{
-                        rotationUpper: 0,
-                        rotationLower: 0,
-                        rotationUppest: 0,
-                    }
-                },
-                {
-                    rotateX:{
-                        rotationUpper: 0,
-                        rotationLower: 15,
-                        rotationUppest: 0,
-                    },
-                    rotateY:{
-                        rotationUpper: 0,
-                        rotationLower: 90,
-                        rotationUppest: 0,
-                    },
-                    rotateZ:{
-                        rotationUpper: 0,
-                        rotationLower: 0,
-                        rotationUppest: 0,
-                    }
-                },
-                {
-                    rotateX:{
-                        rotationUpper: 0,
-                        rotationLower: 0,
-                        rotationUppest: 0,
-                    },
-                    rotateY:{
-                        rotationUpper: 0,
-                        rotationLower: 0,
-                        rotationUppest: 0,
-                    },
-                    rotateZ:{
-                        rotationUpper: 0,
-                        rotationLower: 0,
-                        rotationUppest: 0,
-                    }
-                },
-                {
-                    rotateX:{
-                        rotationUpper: 0,
-                        rotationLower:  -10,
-                        rotationUppest: 0,
-                    },
-                    rotateY:{
-                        rotationUpper: 0,
-                        rotationLower: 90,
-                        rotationUppest: 0,
-                    },
-                    rotateZ:{
-                        rotationUpper: 0,
-                        rotationLower: 0,
-                        rotationUppest: 0,
-                    }
-                },
-                {
-                    rotateX:{
-                        rotationUpper: 0,
-                        rotationLower: -40,
-                        rotationUppest: 0,
-                    },
-                    rotateY:{
-                        rotationUpper: 0,
-                        rotationLower: 90,
-                        rotationUppest: 0,
-                    },
-                    rotateZ:{
-                        rotationUpper: 0,
-                        rotationLower: 0,
-                        rotationUppest: 0,
-                    }
-                }
-            ]
+                handPositions = "weird";
+                
             }
         });
     }
@@ -599,16 +513,51 @@ var render = function () {
 
     /* movement to new positions */ 
 
-    if(fingers_rotation[4].rotateX.rotationUpper > 90){
+    if(handPositions === "knuckles"){
+        if(fingers_rotation[4].rotateX.rotationUpper > 90){
 
-    } else {
-        for(var i = 0; i < 4; i++){
-            fingers_rotation[i].rotateX.rotationLower += 1;
-            fingers_rotation[i].rotateX.rotationUpper += 1;
-            fingers_rotation[i].rotateX.rotationUppest += 1;
+        } else {
+            for(var i = 0; i < 4; i++){
+                fingers_rotation[i].rotateX.rotationLower += 1;
+                fingers_rotation[i].rotateX.rotationUpper += 1;
+                fingers_rotation[i].rotateX.rotationUppest += 1;
+            }
+        
+            fingers_rotation[4].rotateX.rotationUpper += 1;
         }
+    } else if(handPositions === "oneFinger"){
+        if(fingers_rotation[4].rotateX.rotationUpper > 90){
+             
+        } else {
+            for(var i = 0; i < 3; i++){
+                fingers_rotation[i].rotateX.rotationLower += 1;
+                fingers_rotation[i].rotateX.rotationUpper += 1;
+                fingers_rotation[i].rotateX.rotationUppest += 1;
+            }
     
-        fingers_rotation[4].rotateX.rotationUpper += 1;
+            fingers_rotation[4].rotateX.rotationUpper += 1;
+        }
+    } else if(handPositions === "weird"){
+        if(fingers_rotation[3].rotateY.rotationUpper > 90){
+             
+        } else {
+            for(var i = 0; i < 4; i++){
+                fingers_rotation[i].rotateY.rotationLower += 1;
+            }
+    
+            if(fingers_rotation[0].rotateX.rotationLower <= 20){
+                fingers_rotation[0].rotateX.rotationLower += 1;
+            }
+            if(fingers_rotation[1].rotateX.rotationLower <= 15){
+                fingers_rotation[1].rotateX.rotationLower += 1;
+            }
+            if(fingers_rotation[3].rotateX.rotationLower >= -15){
+                fingers_rotation[3].rotateX.rotationLower -= 1;
+            }
+
+    
+            fingers_rotation[4].rotateY.rotationLower += 1;
+        }
     }
 
 
