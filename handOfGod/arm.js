@@ -45,7 +45,7 @@ var vertexColors = [
 // Parameters controlling the size of the Robot's arm
 
 var BASE_HEIGHT = 7.0;
-var BASE_WIDTH = 4.5;
+var BASE_WIDTH = 5;
 
 /* finger */
 var LOWER_ARM_HEIGHT = [1, 1.5, 1.7, 1.5, 1];
@@ -447,7 +447,9 @@ window.onload = function init() {
             } else if(i.target.id == 4){
                 handPositions = "weird";
                 
-            }
+            } else if(i.target.id == 5){
+                handPositions = "rock";
+            } 
         });
     }
 
@@ -557,6 +559,18 @@ var render = function () {
 
     
             fingers_rotation[4].rotateY.rotationLower += 1;
+        }
+    } else if(handPositions === "rock"){
+        if(fingers_rotation[4].rotateX.rotationUpper > 90){
+             
+        } else {
+            for(var i = 1; i < 3; i++){
+                fingers_rotation[i].rotateX.rotationLower += 1;
+                fingers_rotation[i].rotateX.rotationUpper += 1;
+                fingers_rotation[i].rotateX.rotationUppest += 1;
+            }
+    
+            fingers_rotation[4].rotateX.rotationUpper += 1;
         }
     }
 

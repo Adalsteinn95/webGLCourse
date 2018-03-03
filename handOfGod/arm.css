@@ -1,0 +1,21 @@
+.Fingers {
+    display: flex;
+    justify-content: center;
+
+}
+
+.Positions {
+    display: flex;
+    justify-content: center;
+
+}
+
+div {
+    margin: 15px;
+}
+
+button {
+    margin: 15px;
+    max-width: 200px;
+    min-width: 100px;
+}
