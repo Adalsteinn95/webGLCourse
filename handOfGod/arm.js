@@ -561,7 +561,7 @@ var render = function () {
             fingers_rotation[4].rotateY.rotationLower += 1;
         }
     } else if(handPositions === "rock"){
-        if(fingers_rotation[4].rotateX.rotationUpper > 90){
+        if(fingers_rotation[2].rotateX.rotationUpper > 90){
              
         } else {
             for(var i = 1; i < 3; i++){
@@ -570,7 +570,7 @@ var render = function () {
                 fingers_rotation[i].rotateX.rotationUppest += 1;
             }
     
-            fingers_rotation[4].rotateX.rotationUpper += 1;
+            
         }
     }
 
