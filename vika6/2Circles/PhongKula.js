@@ -1,14 +1,14 @@
 /////////////////////////////////////////////////////////////////
-//    Sýnidæmi í Tölvugrafík
-//     Kúla sem lituð er með Phong litun.  Hægt að snúa henni
-//     með músinni og auka/minnka nákvæmni kúlunnar með hnöppum
+//    Sï¿½nidï¿½mi ï¿½ Tï¿½lvugrafï¿½k
+//     Kï¿½la sem lituï¿½ er meï¿½ Phong litun.  Hï¿½gt aï¿½ snï¿½a henni
+//     meï¿½ mï¿½sinni og auka/minnka nï¿½kvï¿½mni kï¿½lunnar meï¿½ hnï¿½ppum
 //
-//    Hjálmtýr Hafsteinsson, mars 2018
+//    Hjï¿½lmtï¿½r Hafsteinsson, mars 2018
 /////////////////////////////////////////////////////////////////
 var canvas;
 var gl;
 
-var numTimesToSubdivide = 3;
+var numTimesToSubdivide = 5;
  
 var index = 0;
 
@@ -31,7 +31,9 @@ var va = vec4(0.0, 0.0, -1.0,1);
 var vb = vec4(0.0, 0.942809, 0.333333, 1);
 var vc = vec4(-0.816497, -0.471405, 0.333333, 1);
 var vd = vec4(0.816497, -0.471405, 0.333333,1);
-    
+
+
+
 var lightPosition = vec4(1.0, 1.0, 1.0, 0.0 );
 var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
 var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
@@ -132,9 +134,7 @@ window.onload = function init() {
 
     
     tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
-
-    document.getElementById("Subdivisions").innerHTML = numTimesToSubdivide;
-    document.getElementById("NrVertices").innerHTML = index;
+    tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
 
     var nBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, nBuffer);
@@ -185,22 +185,6 @@ window.onload = function init() {
         }
     } );
     
-    document.getElementById("btnIncrease").onclick = function(){
-        if( numTimesToSubdivide < 7 ) numTimesToSubdivide++;
-        document.getElementById("Subdivisions").innerHTML = numTimesToSubdivide;
-        index = 0;
-        pointsArray = []; 
-        normalsArray = [];
-        init();
-    };
-    document.getElementById("btnDecrease").onclick = function(){
-        if( numTimesToSubdivide > 0 ) numTimesToSubdivide--;
-        document.getElementById("Subdivisions").innerHTML = numTimesToSubdivide;
-        index = 0;
-        pointsArray = []; 
-        normalsArray = [];
-        init();
-    };
 
 
     // Event listener for mousewheel
@@ -221,9 +205,9 @@ function render() {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     
     modelViewMatrix = lookAt( vec3(0.0, 0.0, zDist), at, up );
+    modelViewMatrix = mult( modelViewMatrix, translate( 1.25, 0, 0.0 ) );
     modelViewMatrix = mult( modelViewMatrix, rotate( spinY, [0, 1, 0] ) );
     modelViewMatrix = mult( modelViewMatrix, rotate( spinX, [1, 0, 0] ) );
-
     // normal matrix only really need if there is nonuniform scaling
     // it's here for generality but since there is
     // no scaling in this example we could just use modelView matrix in shaders
@@ -232,12 +216,24 @@ function render() {
         vec3(modelViewMatrix[1][0], modelViewMatrix[1][1], modelViewMatrix[1][2]),
         vec3(modelViewMatrix[2][0], modelViewMatrix[2][1], modelViewMatrix[2][2])
     ];
+
+
             
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix) );
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix) );
     gl.uniformMatrix3fv(normalMatrixLoc, false, flatten(normalMatrix) );
         
     gl.drawArrays( gl.TRIANGLES, 0, index );
+
+    modelViewMatrix = lookAt( vec3(0.0, 0.0, zDist), at, up );
+    modelViewMatrix = mult( modelViewMatrix, translate( -1.25, 0, 0.0 ) );
+    modelViewMatrix = mult( modelViewMatrix, rotate( spinY, [0, 1, 0] ) );
+    modelViewMatrix = mult( modelViewMatrix, rotate( spinX, [1, 0, 0] ) );
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix) );
+    gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix) );
+    gl.uniformMatrix3fv(normalMatrixLoc, false, flatten(normalMatrix) );
+    
+    gl.drawArrays( gl.TRIANGLES, 0, index/2 );
 
     window.requestAnimFrame(render);
 }
